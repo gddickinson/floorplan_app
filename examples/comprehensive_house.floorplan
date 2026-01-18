@@ -1,0 +1,1096 @@
+{
+  "name": "Comprehensive House - All Features",
+  "scale": 1.0,
+  "walls": [
+    {
+      "id": "154506e2-e24e-42cf-9e0e-7cf47698d14a",
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 0
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "cc5b7c9b-e2d8-4f2e-abc0-b8ef78cbe9ef",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 216
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "824b50c2-764c-4730-a53a-9717190fe7ea",
+      "start": {
+        "x": 240,
+        "y": 216
+      },
+      "end": {
+        "x": 0,
+        "y": 216
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "aed7beee-8461-4425-9548-438a1f1ee1bf",
+      "start": {
+        "x": 0,
+        "y": 216
+      },
+      "end": {
+        "x": 0,
+        "y": 0
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "b37cc496-43e2-4af3-bd70-8dbc5ae5fea3",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 420,
+        "y": 0
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "f0b6b1a4-c956-4489-82dd-bc62cc0008a7",
+      "start": {
+        "x": 420,
+        "y": 0
+      },
+      "end": {
+        "x": 420,
+        "y": 144
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "2b184059-8150-498d-901c-02e5408873b8",
+      "start": {
+        "x": 420,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "3279e2f4-73cf-4d2f-8f6a-91238e466241",
+      "start": {
+        "x": 240,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 216
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "c736e966-d024-4cf1-bee4-0942cb5d9f44",
+      "start": {
+        "x": 240,
+        "y": 216
+      },
+      "end": {
+        "x": 384,
+        "y": 216
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "1a5d1a29-b74b-4f0f-b21c-1cc3a1e4828a",
+      "start": {
+        "x": 384,
+        "y": 216
+      },
+      "end": {
+        "x": 384,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "361af80c-e5d2-486e-bb37-a96ec85de591",
+      "start": {
+        "x": 384,
+        "y": 144
+      },
+      "end": {
+        "x": 552,
+        "y": 144
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "ec83844b-4ca4-4398-9608-89f21446f913",
+      "start": {
+        "x": 552,
+        "y": 144
+      },
+      "end": {
+        "x": 552,
+        "y": 312
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "1e95f487-5f79-478a-b23a-d0e8797ac07c",
+      "start": {
+        "x": 552,
+        "y": 312
+      },
+      "end": {
+        "x": 384,
+        "y": 312
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "e29fb6d8-aaf1-49cf-b1f5-9371b1f92b78",
+      "start": {
+        "x": 384,
+        "y": 312
+      },
+      "end": {
+        "x": 384,
+        "y": 216
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "81504209-c20f-4820-8f52-90a37eb07d0f",
+      "start": {
+        "x": 384,
+        "y": 144
+      },
+      "end": {
+        "x": 384,
+        "y": 24
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "cb2b562c-194f-4f6f-993d-140fbbb48e7e",
+      "start": {
+        "x": 384,
+        "y": 24
+      },
+      "end": {
+        "x": 480,
+        "y": 24
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "579ba146-f62e-4b2b-bd4a-a9a13a6d71e5",
+      "start": {
+        "x": 480,
+        "y": 24
+      },
+      "end": {
+        "x": 480,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "67d9e196-8c87-4d43-b71d-dcf4c365b37a",
+      "start": {
+        "x": 480,
+        "y": 24
+      },
+      "end": {
+        "x": 624,
+        "y": 24
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "e959b915-f713-4ecc-9d11-e853ff867dec",
+      "start": {
+        "x": 624,
+        "y": 24
+      },
+      "end": {
+        "x": 624,
+        "y": 144
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "c9d2dcc7-073c-484f-9d6b-91d44ba561aa",
+      "start": {
+        "x": 624,
+        "y": 144
+      },
+      "end": {
+        "x": 552,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "6da48ea5-6c9a-4f80-b288-b8c7ff894ad3",
+      "start": {
+        "x": 552,
+        "y": 144
+      },
+      "end": {
+        "x": 552,
+        "y": 24
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "0ec75546-06b4-4ce1-a56c-1333b4829d0a",
+      "start": {
+        "x": 480,
+        "y": 144
+      },
+      "end": {
+        "x": 624,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "8bfd5183-8443-4f4c-8e10-776b8896f409",
+      "start": {
+        "x": 420,
+        "y": 0
+      },
+      "end": {
+        "x": 492,
+        "y": 0
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "brick"
+    },
+    {
+      "id": "4d59d02a-25b7-4837-8089-935a40d7cd9c",
+      "start": {
+        "x": 492,
+        "y": 0
+      },
+      "end": {
+        "x": 492,
+        "y": 24
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "1f61b4af-aa70-42d4-80a7-8c1d7a18c3d2",
+      "start": {
+        "x": 420,
+        "y": 0
+      },
+      "end": {
+        "x": 420,
+        "y": 24
+      },
+      "thickness": 6,
+      "wall_type": "interior",
+      "wall_style": "solid"
+    },
+    {
+      "id": "17c8cebf-bdda-4c43-badf-2d045c9d93d4",
+      "start": {
+        "x": 0,
+        "y": 216
+      },
+      "end": {
+        "x": 0,
+        "y": 456
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "concrete"
+    },
+    {
+      "id": "8648a6d7-ee1e-40d3-8b46-1087245cb426",
+      "start": {
+        "x": 0,
+        "y": 456
+      },
+      "end": {
+        "x": 240,
+        "y": 456
+      },
+      "thickness": 8,
+      "wall_type": "exterior",
+      "wall_style": "concrete"
+    },
+    {
+      "id": "e45fef2b-e1ca-4e2b-9110-93c0d922203d",
+      "start": {
+        "x": 240,
+        "y": 456
+      },
+      "end": {
+        "x": 240,
+        "y": 216
+      },
+      "thickness": 8,
+      "wall_type": "interior",
+      "wall_style": "concrete"
+    }
+  ],
+  "openings": [
+    {
+      "id": "85f49152-e2ba-4cd1-bb29-29370df097cc",
+      "wall_id": "154506e2-e24e-42cf-9e0e-7cf47698d14a",
+      "position": 0.5,
+      "width": 72,
+      "opening_type": "door_french",
+      "height": 84,
+      "sill_height": 36.0
+    },
+    {
+      "id": "0ca7ea9d-2cf3-4230-b4e8-ce5bd9be7955",
+      "wall_id": "824b50c2-764c-4730-a53a-9717190fe7ea",
+      "position": 0.5,
+      "width": 96,
+      "opening_type": "window_bay",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "b7f32fe7-3bcc-457b-8af9-618e4aeb71d9",
+      "wall_id": "aed7beee-8461-4425-9548-438a1f1ee1bf",
+      "position": 0.3,
+      "width": 48,
+      "opening_type": "window_casement",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "439b0cb1-261c-4bbb-97ce-fe3829d840de",
+      "wall_id": "aed7beee-8461-4425-9548-438a1f1ee1bf",
+      "position": 0.7,
+      "width": 48,
+      "opening_type": "window_casement",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "34027e66-cdf5-4692-bd0b-8ec5c931dbca",
+      "wall_id": "f0b6b1a4-c956-4489-82dd-bc62cc0008a7",
+      "position": 0.7,
+      "width": 72,
+      "opening_type": "door_sliding",
+      "height": 84,
+      "sill_height": 36.0
+    },
+    {
+      "id": "37e90968-7a8f-4220-9b99-413aad80dbb8",
+      "wall_id": "b37cc496-43e2-4af3-bd70-8dbc5ae5fea3",
+      "position": 0.5,
+      "width": 60,
+      "opening_type": "window_double",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "a9ce28eb-24e8-4b8e-bba0-ecf133e832ea",
+      "wall_id": "2b184059-8150-498d-901c-02e5408873b8",
+      "position": 0.2,
+      "width": 36,
+      "opening_type": "door_single",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "e9e0df86-9239-42a1-aa06-156e8d373d28",
+      "wall_id": "c736e966-d024-4cf1-bee4-0942cb5d9f44",
+      "position": 0.5,
+      "width": 72,
+      "opening_type": "window_picture",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "1017a0b2-db00-4439-a4ca-e94722517be6",
+      "wall_id": "3279e2f4-73cf-4d2f-8f6a-91238e466241",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "archway",
+      "height": 84,
+      "sill_height": 36.0
+    },
+    {
+      "id": "8f9e4c7d-2241-436b-a5ec-73958b6d48c8",
+      "wall_id": "1a5d1a29-b74b-4f0f-b21c-1cc3a1e4828a",
+      "position": 0.5,
+      "width": 60,
+      "opening_type": "door_double",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "c431eeab-220a-403d-942d-98c7dc6802d0",
+      "wall_id": "ec83844b-4ca4-4398-9608-89f21446f913",
+      "position": 0.3,
+      "width": 48,
+      "opening_type": "window_slider",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "d13a1f06-56ce-4516-bbfb-8d8125edf589",
+      "wall_id": "ec83844b-4ca4-4398-9608-89f21446f913",
+      "position": 0.7,
+      "width": 48,
+      "opening_type": "window_slider",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "d7e86a30-1ba0-4357-ade9-81a7fc082c9b",
+      "wall_id": "1e95f487-5f79-478a-b23a-d0e8797ac07c",
+      "position": 0.5,
+      "width": 60,
+      "opening_type": "window_double",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "96c81feb-6be8-407f-85cf-19badf6bd0ce",
+      "wall_id": "579ba146-f62e-4b2b-bd4a-a9a13a6d71e5",
+      "position": 0.5,
+      "width": 30,
+      "opening_type": "door_pocket",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "53901bbc-ddf5-47ef-8233-3ebec30cb1e3",
+      "wall_id": "cb2b562c-194f-4f6f-993d-140fbbb48e7e",
+      "position": 0.5,
+      "width": 36,
+      "opening_type": "window_awning",
+      "height": 80.0,
+      "sill_height": 60
+    },
+    {
+      "id": "d9d1d7f0-12c0-493c-a73a-dc7aa8a6255e",
+      "wall_id": "6da48ea5-6c9a-4f80-b288-b8c7ff894ad3",
+      "position": 0.5,
+      "width": 60,
+      "opening_type": "door_bifold",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "e96c7328-3ef2-4985-93cc-2d665cd93159",
+      "wall_id": "c9d2dcc7-073c-484f-9d6b-91d44ba561aa",
+      "position": 0.7,
+      "width": 32,
+      "opening_type": "door_single",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "16f271bd-ab59-49b9-b48e-dac026105315",
+      "wall_id": "67d9e196-8c87-4d43-b71d-dcf4c365b37a",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window_single",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "6fff87d7-1527-4a40-bd36-a2821b7b06ba",
+      "wall_id": "e959b915-f713-4ecc-9d11-e853ff867dec",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window_single",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "0b532732-26dc-4851-b452-04f749e15752",
+      "wall_id": "1f61b4af-aa70-42d4-80a7-8c1d7a18c3d2",
+      "position": 0.5,
+      "width": 32,
+      "opening_type": "door_dutch",
+      "height": 80.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "3feec2be-fc65-449e-963e-5b8a9258e5ce",
+      "wall_id": "8648a6d7-ee1e-40d3-8b46-1087245cb426",
+      "position": 0.5,
+      "width": 192,
+      "opening_type": "door_garage",
+      "height": 84,
+      "sill_height": 36.0
+    },
+    {
+      "id": "13fa8595-e341-480b-99ad-247879d0d690",
+      "wall_id": "e45fef2b-e1ca-4e2b-9110-93c0d922203d",
+      "position": 0.8,
+      "width": 32,
+      "opening_type": "door_single",
+      "height": 80.0,
+      "sill_height": 36.0
+    }
+  ],
+  "rooms": [
+    {
+      "id": "96a78ac2-4ea0-4df2-a566-39b0f11c49e5",
+      "name": "Living Room",
+      "wall_ids": [
+        "154506e2-e24e-42cf-9e0e-7cf47698d14a",
+        "cc5b7c9b-e2d8-4f2e-abc0-b8ef78cbe9ef",
+        "824b50c2-764c-4730-a53a-9717190fe7ea",
+        "aed7beee-8461-4425-9548-438a1f1ee1bf"
+      ],
+      "color": "#FFE4B5"
+    },
+    {
+      "id": "ecbc7abe-f7ca-4c39-8658-4f7986b275dc",
+      "name": "Kitchen",
+      "wall_ids": [
+        "b37cc496-43e2-4af3-bd70-8dbc5ae5fea3",
+        "f0b6b1a4-c956-4489-82dd-bc62cc0008a7",
+        "2b184059-8150-498d-901c-02e5408873b8",
+        "cc5b7c9b-e2d8-4f2e-abc0-b8ef78cbe9ef"
+      ],
+      "color": "#F0E68C"
+    },
+    {
+      "id": "7bf3c9d3-dbed-4aca-8edf-28c0bd3254f0",
+      "name": "Dining Area",
+      "wall_ids": [
+        "2b184059-8150-498d-901c-02e5408873b8",
+        "3279e2f4-73cf-4d2f-8f6a-91238e466241",
+        "c736e966-d024-4cf1-bee4-0942cb5d9f44",
+        "1a5d1a29-b74b-4f0f-b21c-1cc3a1e4828a"
+      ],
+      "color": "#E6E6FA"
+    },
+    {
+      "id": "c0031773-ef24-43cc-985b-09ccab57285a",
+      "name": "Master Bedroom",
+      "wall_ids": [
+        "1a5d1a29-b74b-4f0f-b21c-1cc3a1e4828a",
+        "361af80c-e5d2-486e-bb37-a96ec85de591",
+        "ec83844b-4ca4-4398-9608-89f21446f913",
+        "1e95f487-5f79-478a-b23a-d0e8797ac07c",
+        "e29fb6d8-aaf1-49cf-b1f5-9371b1f92b78"
+      ],
+      "color": "#FFB6C1"
+    },
+    {
+      "id": "5d26ef5d-0bbb-44bf-9822-f27ad9367a9d",
+      "name": "Master Bath",
+      "wall_ids": [
+        "361af80c-e5d2-486e-bb37-a96ec85de591",
+        "81504209-c20f-4820-8f52-90a37eb07d0f",
+        "cb2b562c-194f-4f6f-993d-140fbbb48e7e",
+        "579ba146-f62e-4b2b-bd4a-a9a13a6d71e5"
+      ],
+      "color": "#B0E0E6"
+    },
+    {
+      "id": "4fd9828c-b4cd-4783-b4ca-0dfc8e1ed31a",
+      "name": "Guest Bedroom",
+      "wall_ids": [
+        "579ba146-f62e-4b2b-bd4a-a9a13a6d71e5",
+        "67d9e196-8c87-4d43-b71d-dcf4c365b37a",
+        "e959b915-f713-4ecc-9d11-e853ff867dec",
+        "c9d2dcc7-073c-484f-9d6b-91d44ba561aa"
+      ],
+      "color": "#DDA0DD"
+    },
+    {
+      "id": "8f77e5e3-5072-4501-86ce-cd40d9b226af",
+      "name": "Laundry",
+      "wall_ids": [
+        "b37cc496-43e2-4af3-bd70-8dbc5ae5fea3",
+        "8bfd5183-8443-4f4c-8e10-776b8896f409",
+        "4d59d02a-25b7-4837-8089-935a40d7cd9c",
+        "cb2b562c-194f-4f6f-993d-140fbbb48e7e",
+        "1f61b4af-aa70-42d4-80a7-8c1d7a18c3d2"
+      ],
+      "color": "#F5DEB3"
+    },
+    {
+      "id": "76737812-824f-4647-988a-861b420b2d61",
+      "name": "Garage",
+      "wall_ids": [
+        "824b50c2-764c-4730-a53a-9717190fe7ea",
+        "17c8cebf-bdda-4c43-badf-2d045c9d93d4",
+        "8648a6d7-ee1e-40d3-8b46-1087245cb426",
+        "e45fef2b-e1ca-4e2b-9110-93c0d922203d"
+      ],
+      "color": "#D3D3D3"
+    }
+  ],
+  "furniture": [
+    {
+      "id": "3edd8ba4-f90a-470b-8858-be214736453b",
+      "position": {
+        "x": 120,
+        "y": 108
+      },
+      "width": 84,
+      "depth": 36,
+      "furniture_type": "sofa",
+      "rotation": 90,
+      "name": "Sofa"
+    },
+    {
+      "id": "f326f1ac-07d8-4e28-9300-543e40af91b1",
+      "position": {
+        "x": 180,
+        "y": 60
+      },
+      "width": 36,
+      "depth": 36,
+      "furniture_type": "armchair",
+      "rotation": 0.0,
+      "name": "Armchair"
+    },
+    {
+      "id": "b7662984-e1b7-4c28-b663-73c70904cd7d",
+      "position": {
+        "x": 180,
+        "y": 156
+      },
+      "width": 36,
+      "depth": 36,
+      "furniture_type": "armchair",
+      "rotation": 0.0,
+      "name": "Armchair"
+    },
+    {
+      "id": "25f533c4-71b8-47f7-a082-9d7fa00430c4",
+      "position": {
+        "x": 120,
+        "y": 60
+      },
+      "width": 48,
+      "depth": 24,
+      "furniture_type": "table_coffee",
+      "rotation": 0.0,
+      "name": "Table Coffee"
+    },
+    {
+      "id": "3cd3ebac-403c-460d-9c2a-847106483ff3",
+      "position": {
+        "x": 192,
+        "y": 192
+      },
+      "width": 60,
+      "depth": 18,
+      "furniture_type": "tv_stand",
+      "rotation": 270,
+      "name": "Tv Stand"
+    },
+    {
+      "id": "dd84b148-1c91-42b0-8bef-f74dec4f2dc8",
+      "position": {
+        "x": 312,
+        "y": 180
+      },
+      "width": 72,
+      "depth": 36,
+      "furniture_type": "table_dining",
+      "rotation": 0.0,
+      "name": "Table Dining"
+    },
+    {
+      "id": "896c91d4-1481-498a-b486-0ede2faf13a7",
+      "position": {
+        "x": 360,
+        "y": 156
+      },
+      "width": 24,
+      "depth": 24,
+      "furniture_type": "chair",
+      "rotation": 0.0,
+      "name": "Chair"
+    },
+    {
+      "id": "86191903-8931-4fac-9caa-34277d4e3c9f",
+      "position": {
+        "x": 264,
+        "y": 156
+      },
+      "width": 24,
+      "depth": 24,
+      "furniture_type": "chair",
+      "rotation": 0.0,
+      "name": "Chair"
+    },
+    {
+      "id": "fa177407-d348-4f5f-8121-a55f8db07f7f",
+      "position": {
+        "x": 360,
+        "y": 204
+      },
+      "width": 24,
+      "depth": 24,
+      "furniture_type": "chair",
+      "rotation": 0.0,
+      "name": "Chair"
+    },
+    {
+      "id": "e5fcde10-ff3e-4c88-a8b0-625ae70798ec",
+      "position": {
+        "x": 264,
+        "y": 204
+      },
+      "width": 24,
+      "depth": 24,
+      "furniture_type": "chair",
+      "rotation": 0.0,
+      "name": "Chair"
+    },
+    {
+      "id": "1143ad3b-d0e9-4ed8-ae20-cb8d87da9a63",
+      "position": {
+        "x": 468,
+        "y": 228
+      },
+      "width": 76,
+      "depth": 80,
+      "furniture_type": "bed_king",
+      "rotation": 0.0,
+      "name": "Bed King"
+    },
+    {
+      "id": "779170f6-3848-48ae-9cc5-7e50c15ab20f",
+      "position": {
+        "x": 408,
+        "y": 192
+      },
+      "width": 24,
+      "depth": 18,
+      "furniture_type": "nightstand",
+      "rotation": 0.0,
+      "name": "Nightstand"
+    },
+    {
+      "id": "3ca98e30-b13d-4b3c-a3fa-879e74502822",
+      "position": {
+        "x": 528,
+        "y": 192
+      },
+      "width": 24,
+      "depth": 18,
+      "furniture_type": "nightstand",
+      "rotation": 0.0,
+      "name": "Nightstand"
+    },
+    {
+      "id": "34e00fbe-0a9e-46b8-880f-1f9c886c52af",
+      "position": {
+        "x": 480,
+        "y": 288
+      },
+      "width": 48,
+      "depth": 18,
+      "furniture_type": "dresser",
+      "rotation": 0.0,
+      "name": "Dresser"
+    },
+    {
+      "id": "21c34a09-050b-4eba-9fca-ead56a9595e7",
+      "position": {
+        "x": 420,
+        "y": 288
+      },
+      "width": 60,
+      "depth": 30,
+      "furniture_type": "desk",
+      "rotation": 0.0,
+      "name": "Desk"
+    },
+    {
+      "id": "72f902b0-d8e7-4750-968c-ceeb4771d97b",
+      "position": {
+        "x": 564,
+        "y": 84
+      },
+      "width": 60,
+      "depth": 80,
+      "furniture_type": "bed_queen",
+      "rotation": 0.0,
+      "name": "Bed Queen"
+    },
+    {
+      "id": "8f6fc692-ed90-4bb0-9445-e73bc1bf452e",
+      "position": {
+        "x": 528,
+        "y": 48
+      },
+      "width": 24,
+      "depth": 18,
+      "furniture_type": "nightstand",
+      "rotation": 0.0,
+      "name": "Nightstand"
+    },
+    {
+      "id": "ee73fdaa-2ed7-49a4-8ad1-4bdcf735acb2",
+      "position": {
+        "x": 600,
+        "y": 48
+      },
+      "width": 24,
+      "depth": 18,
+      "furniture_type": "nightstand",
+      "rotation": 0.0,
+      "name": "Nightstand"
+    },
+    {
+      "id": "dcba01d0-7cd1-4cb0-9cab-2f2aba29d5ba",
+      "position": {
+        "x": 612,
+        "y": 120
+      },
+      "width": 36,
+      "depth": 12,
+      "furniture_type": "bookshelf",
+      "rotation": 0.0,
+      "name": "Bookshelf"
+    }
+  ],
+  "stairs": [
+    {
+      "id": "e0537954-bcc3-4cdc-b69b-6dceb8265267",
+      "start": {
+        "x": 504,
+        "y": 144
+      },
+      "end": {
+        "x": 504,
+        "y": 264
+      },
+      "width": 36,
+      "stair_type": "straight",
+      "num_steps": 14,
+      "rotation": 0.0
+    }
+  ],
+  "fixtures": [
+    {
+      "id": "8cef7d44-5ba6-4890-a63e-b5d50b4e4b71",
+      "position": {
+        "x": 264,
+        "y": 24
+      },
+      "width": 36,
+      "depth": 30,
+      "fixture_type": "refrigerator",
+      "rotation": 0.0,
+      "name": "Refrigerator"
+    },
+    {
+      "id": "57267f4d-9fcb-46ff-aa5f-9a12c8b13d85",
+      "position": {
+        "x": 324,
+        "y": 24
+      },
+      "width": 30,
+      "depth": 24,
+      "fixture_type": "stove",
+      "rotation": 0.0,
+      "name": "Stove"
+    },
+    {
+      "id": "2a685963-420e-4075-99be-a38f394810e3",
+      "position": {
+        "x": 384,
+        "y": 24
+      },
+      "width": 24,
+      "depth": 24,
+      "fixture_type": "dishwasher",
+      "rotation": 0.0,
+      "name": "Dishwasher"
+    },
+    {
+      "id": "94aa1fed-6f03-4ccb-ad2d-e794af1408c5",
+      "position": {
+        "x": 348,
+        "y": 24
+      },
+      "width": 33,
+      "depth": 22,
+      "fixture_type": "sink_kitchen",
+      "rotation": 270,
+      "name": "Sink Kitchen"
+    },
+    {
+      "id": "914db8d6-02b0-4c37-b2a3-60abe3f6976d",
+      "position": {
+        "x": 264,
+        "y": 120
+      },
+      "width": 30,
+      "depth": 16,
+      "fixture_type": "microwave",
+      "rotation": 0.0,
+      "name": "Microwave"
+    },
+    {
+      "id": "68b66a70-e89d-467b-84f3-e3239a9f7400",
+      "position": {
+        "x": 408,
+        "y": 36
+      },
+      "width": 20,
+      "depth": 30,
+      "fixture_type": "toilet",
+      "rotation": 90,
+      "name": "Toilet"
+    },
+    {
+      "id": "4cbce421-803f-40cf-95f9-ab0f027c32b7",
+      "position": {
+        "x": 456,
+        "y": 36
+      },
+      "width": 60,
+      "depth": 22,
+      "fixture_type": "sink_double",
+      "rotation": 270,
+      "name": "Sink Double"
+    },
+    {
+      "id": "0edc3fed-0d30-483e-b646-e890728ea8d6",
+      "position": {
+        "x": 432,
+        "y": 120
+      },
+      "width": 60,
+      "depth": 32,
+      "fixture_type": "bathtub",
+      "rotation": 0.0,
+      "name": "Bathtub"
+    },
+    {
+      "id": "52cd649c-0139-4f72-8a93-7d36e88fa9ae",
+      "position": {
+        "x": 408,
+        "y": 84
+      },
+      "width": 36,
+      "depth": 36,
+      "fixture_type": "shower_corner",
+      "rotation": 0.0,
+      "name": "Shower Corner"
+    },
+    {
+      "id": "9b89d6f3-8227-415c-87ca-faa3c7d140a5",
+      "position": {
+        "x": 432,
+        "y": 12
+      },
+      "width": 27,
+      "depth": 28,
+      "fixture_type": "washer",
+      "rotation": 0.0,
+      "name": "Washer"
+    },
+    {
+      "id": "a47400be-9618-4a10-ade8-ea3dd303240b",
+      "position": {
+        "x": 468,
+        "y": 12
+      },
+      "width": 27,
+      "depth": 28,
+      "fixture_type": "dryer",
+      "rotation": 0.0,
+      "name": "Dryer"
+    },
+    {
+      "id": "00abc4e5-bc5a-40c8-b01e-882ac749529a",
+      "position": {
+        "x": 24,
+        "y": 432
+      },
+      "width": 24,
+      "depth": 24,
+      "fixture_type": "water_heater",
+      "rotation": 0.0,
+      "name": "Water Heater"
+    },
+    {
+      "id": "b7e8aceb-ab19-4489-969b-44f39483f654",
+      "position": {
+        "x": 60,
+        "y": 432
+      },
+      "width": 36,
+      "depth": 30,
+      "fixture_type": "furnace",
+      "rotation": 0.0,
+      "name": "Furnace"
+    }
+  ],
+  "metadata": {}
+}

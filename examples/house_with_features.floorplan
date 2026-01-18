@@ -1,0 +1,219 @@
+{
+  "name": "House with Rooms",
+  "scale": 1.0,
+  "walls": [
+    {
+      "id": "bd53eb05-3e89-46ab-8f4c-a026d9a7d6fa",
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 0
+      },
+      "thickness": 8.0,
+      "wall_type": "load_bearing"
+    },
+    {
+      "id": "ccd19a0f-4025-4f76-a028-35f731264f4d",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 180
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "7b09a6df-6604-4a0d-b7c1-22a431690440",
+      "start": {
+        "x": 240,
+        "y": 180
+      },
+      "end": {
+        "x": 0,
+        "y": 180
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "16309677-f8db-4d4d-8262-ebcb2e2a06a9",
+      "start": {
+        "x": 0,
+        "y": 180
+      },
+      "end": {
+        "x": 0,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "87ce5490-893f-451c-a081-9074bd09cec1",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 420,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "dc8942c4-009d-4d1d-8fa8-1b5a90b05a26",
+      "start": {
+        "x": 420,
+        "y": 0
+      },
+      "end": {
+        "x": 420,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "a8053ef6-7f3f-4a37-9bd1-50354752b85c",
+      "start": {
+        "x": 420,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "interior"
+    },
+    {
+      "id": "c94ee3c9-f026-4388-84a3-92f5cf53ddfe",
+      "start": {
+        "x": 240,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 180
+      },
+      "thickness": 4,
+      "wall_type": "interior"
+    },
+    {
+      "id": "8c08d98a-70e1-49e9-9114-50788e373203",
+      "start": {
+        "x": 240,
+        "y": 180
+      },
+      "end": {
+        "x": 384,
+        "y": 180
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "8a7894c4-1a56-4d69-9f97-002bb8381a37",
+      "start": {
+        "x": 384,
+        "y": 180
+      },
+      "end": {
+        "x": 384,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    }
+  ],
+  "openings": [
+    {
+      "id": "148a68a7-55bd-4556-82c8-8266852db05e",
+      "wall_id": "bd53eb05-3e89-46ab-8f4c-a026d9a7d6fa",
+      "position": 0.5,
+      "width": 42.0,
+      "opening_type": "door",
+      "height": 84.0,
+      "sill_height": 36.0
+    },
+    {
+      "id": "2d311b40-e2f2-4e0d-862e-73b0d6ebe06a",
+      "wall_id": "16309677-f8db-4d4d-8262-ebcb2e2a06a9",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "b70f1e51-dc20-454f-a478-38fdf172e183",
+      "wall_id": "dc8942c4-009d-4d1d-8fa8-1b5a90b05a26",
+      "position": 0.5,
+      "width": 36,
+      "opening_type": "window",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "13154987-9b7e-4bb7-9f09-09c17feae5bc",
+      "wall_id": "8c08d98a-70e1-49e9-9114-50788e373203",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window",
+      "height": 80.0,
+      "sill_height": 36
+    },
+    {
+      "id": "bf3fd6e6-50c6-4f92-8947-206025e90d77",
+      "wall_id": "a8053ef6-7f3f-4a37-9bd1-50354752b85c",
+      "position": 0.8,
+      "width": 32,
+      "opening_type": "door",
+      "height": 80.0,
+      "sill_height": 36.0
+    }
+  ],
+  "rooms": [
+    {
+      "id": "7843718e-cd51-45db-aa33-a597bddc34b6",
+      "name": "Living Room",
+      "wall_ids": [
+        "bd53eb05-3e89-46ab-8f4c-a026d9a7d6fa",
+        "ccd19a0f-4025-4f76-a028-35f731264f4d",
+        "7b09a6df-6604-4a0d-b7c1-22a431690440",
+        "16309677-f8db-4d4d-8262-ebcb2e2a06a9"
+      ],
+      "color": "#FFE4B5"
+    },
+    {
+      "id": "010a3d1d-3b35-4539-bcfe-3c6c28fef2b3",
+      "name": "Kitchen",
+      "wall_ids": [
+        "87ce5490-893f-451c-a081-9074bd09cec1",
+        "dc8942c4-009d-4d1d-8fa8-1b5a90b05a26",
+        "a8053ef6-7f3f-4a37-9bd1-50354752b85c",
+        "ccd19a0f-4025-4f76-a028-35f731264f4d"
+      ],
+      "color": "#B0E0E6"
+    },
+    {
+      "id": "6d7ae8c0-aeba-4395-802d-13bcb6794d78",
+      "name": "Bedroom",
+      "wall_ids": [
+        "a8053ef6-7f3f-4a37-9bd1-50354752b85c",
+        "c94ee3c9-f026-4388-84a3-92f5cf53ddfe",
+        "8c08d98a-70e1-49e9-9114-50788e373203",
+        "8a7894c4-1a56-4d69-9f97-002bb8381a37"
+      ],
+      "color": "#98FB98"
+    }
+  ],
+  "metadata": {}
+}

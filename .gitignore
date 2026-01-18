@@ -1,0 +1,4 @@
+/core/__pycache__
+.DS_Store
+/gui/__pycache__
+/utils/__pycache__

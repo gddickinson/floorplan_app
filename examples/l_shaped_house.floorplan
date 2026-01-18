@@ -1,0 +1,113 @@
+{
+  "name": "L-Shaped House",
+  "scale": 1.0,
+  "walls": [
+    {
+      "id": "4a720679-50b0-44b4-ac57-3980c9472fa3",
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "end": {
+        "x": 360,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "150841c1-5485-4c66-a124-c69ba61ad0b6",
+      "start": {
+        "x": 360,
+        "y": 0
+      },
+      "end": {
+        "x": 360,
+        "y": 240
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "55bfc7b8-60f6-470c-a2bf-2780d02fcbc3",
+      "start": {
+        "x": 360,
+        "y": 240
+      },
+      "end": {
+        "x": 180,
+        "y": 240
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "4d5830b3-b114-4066-a7ff-455c082b7cd8",
+      "start": {
+        "x": 180,
+        "y": 240
+      },
+      "end": {
+        "x": 180,
+        "y": 120
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "414e74ba-663b-485d-a4c0-bfd5ab584897",
+      "start": {
+        "x": 180,
+        "y": 120
+      },
+      "end": {
+        "x": 0,
+        "y": 120
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "1d5d62f5-c67c-45b5-a87d-3e33821fb839",
+      "start": {
+        "x": 0,
+        "y": 120
+      },
+      "end": {
+        "x": 0,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "f07aba32-bb9d-4696-b262-98adbb72c962",
+      "start": {
+        "x": 180,
+        "y": 0
+      },
+      "end": {
+        "x": 180,
+        "y": 240
+      },
+      "thickness": 4,
+      "wall_type": "interior"
+    },
+    {
+      "id": "486698c1-029a-423d-8b4b-79038b3f1948",
+      "start": {
+        "x": 180,
+        "y": 120
+      },
+      "end": {
+        "x": 360,
+        "y": 120
+      },
+      "thickness": 4,
+      "wall_type": "interior"
+    }
+  ],
+  "openings": [],
+  "rooms": [],
+  "metadata": {}
+}

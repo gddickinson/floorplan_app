@@ -1,0 +1,173 @@
+{
+  "name": "Simple House Example",
+  "scale": 1.0,
+  "walls": [
+    {
+      "id": "bdd5312c-9bf7-4c05-98da-d52e79d796f7",
+      "start": {
+        "x": 0,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "641c08ad-377d-4ee9-8692-f68b003e0d7e",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 240,
+        "y": 180
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "76a639a9-d680-469a-9e3b-32ba6ed6554d",
+      "start": {
+        "x": 240,
+        "y": 180
+      },
+      "end": {
+        "x": 0,
+        "y": 180
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "77d8a782-6582-4fd5-acfc-b90ba2718706",
+      "start": {
+        "x": 0,
+        "y": 180
+      },
+      "end": {
+        "x": 0,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "1a4bd9bf-7876-46f4-8cd5-a779a1df26a4",
+      "start": {
+        "x": 240,
+        "y": 0
+      },
+      "end": {
+        "x": 384,
+        "y": 0
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "03295ebe-b628-43f9-bb4c-61e65021ed69",
+      "start": {
+        "x": 384,
+        "y": 0
+      },
+      "end": {
+        "x": 384,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "352ad196-5e4f-431d-bec0-ec5b52e7bd7c",
+      "start": {
+        "x": 384,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 144
+      },
+      "thickness": 6,
+      "wall_type": "exterior"
+    },
+    {
+      "id": "3cedd5ed-516c-4af6-a7cb-277fde20ed8d",
+      "start": {
+        "x": 240,
+        "y": 144
+      },
+      "end": {
+        "x": 240,
+        "y": 180
+      },
+      "thickness": 4,
+      "wall_type": "interior"
+    }
+  ],
+  "openings": [
+    {
+      "id": "128dd46a-2d47-476b-89f0-2382e55309b4",
+      "wall_id": "bdd5312c-9bf7-4c05-98da-d52e79d796f7",
+      "position": 0.5,
+      "width": 36,
+      "opening_type": "door",
+      "height": 80,
+      "sill_height": 36.0
+    },
+    {
+      "id": "37c0aade-d863-4265-8134-3bf4b4e0ddbe",
+      "wall_id": "77d8a782-6582-4fd5-acfc-b90ba2718706",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window",
+      "height": 48,
+      "sill_height": 36
+    },
+    {
+      "id": "77cbf97c-de9d-45fc-a13e-0fa6f6c88dcb",
+      "wall_id": "03295ebe-b628-43f9-bb4c-61e65021ed69",
+      "position": 0.5,
+      "width": 48,
+      "opening_type": "window",
+      "height": 48,
+      "sill_height": 36
+    },
+    {
+      "id": "39ff7e9f-2992-4835-8a03-0b99fa80a1f5",
+      "wall_id": "641c08ad-377d-4ee9-8692-f68b003e0d7e",
+      "position": 0.8,
+      "width": 32,
+      "opening_type": "door",
+      "height": 80,
+      "sill_height": 36.0
+    }
+  ],
+  "rooms": [
+    {
+      "id": "c134f48b-5dd7-437c-98c8-24f2b504ee47",
+      "name": "Living Room",
+      "wall_ids": [
+        "bdd5312c-9bf7-4c05-98da-d52e79d796f7",
+        "641c08ad-377d-4ee9-8692-f68b003e0d7e",
+        "76a639a9-d680-469a-9e3b-32ba6ed6554d",
+        "77d8a782-6582-4fd5-acfc-b90ba2718706"
+      ],
+      "color": "#FFE4B5"
+    },
+    {
+      "id": "49fb7280-ee37-4a7a-95bd-a13edb3bf7a0",
+      "name": "Bedroom",
+      "wall_ids": [
+        "1a4bd9bf-7876-46f4-8cd5-a779a1df26a4",
+        "03295ebe-b628-43f9-bb4c-61e65021ed69",
+        "352ad196-5e4f-431d-bec0-ec5b52e7bd7c",
+        "641c08ad-377d-4ee9-8692-f68b003e0d7e"
+      ],
+      "color": "#B0E0E6"
+    }
+  ],
+  "metadata": {}
+}
