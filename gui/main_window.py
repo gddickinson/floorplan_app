@@ -117,6 +117,11 @@ class MainWindow(QMainWindow):
         self.open_action.setStatusTip("Open an existing floor plan")
         self.open_action.triggered.connect(self.open_file)
         
+        self.import_iphone_action = QAction("Import iPhone &Scan...", self)
+        self.import_iphone_action.setShortcut(QKeySequence("Ctrl+I"))
+        self.import_iphone_action.setStatusTip("Import floor plan from iPhone LiDAR scan")
+        self.import_iphone_action.triggered.connect(self.import_iphone_scan)
+        
         self.save_action = QAction("&Save", self)
         self.save_action.setShortcut(QKeySequence.StandardKey.Save)
         self.save_action.setStatusTip("Save the current floor plan")
@@ -263,6 +268,7 @@ class MainWindow(QMainWindow):
         file_menu = menubar.addMenu("&File")
         file_menu.addAction(self.new_action)
         file_menu.addAction(self.open_action)
+        file_menu.addAction(self.import_iphone_action)
         file_menu.addSeparator()
         file_menu.addAction(self.save_action)
         file_menu.addAction(self.save_as_action)
@@ -720,6 +726,85 @@ class MainWindow(QMainWindow):
                     self,
                     "Error Opening File",
                     f"Could not open file:\n{str(e)}"
+                )
+    
+    def import_iphone_scan(self):
+        """Import a floor plan from iPhone LiDAR scan JSON."""
+        if not self.check_save_changes():
+            return
+        
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Import iPhone/RoomPlan Scan",
+            str(Path.home()),
+            "RoomPlan JSON Files (*.json);;All Files (*)"
+        )
+        
+        if file_path:
+            try:
+                from utils import import_roomplan_json
+                
+                # Import the scan
+                logger.info(f"Importing RoomPlan scan from: {file_path}")
+                loaded_floor_plan = import_roomplan_json(file_path)
+                
+                # Update the building with the loaded floor plan
+                self.building.floors[loaded_floor_plan.floor_level] = loaded_floor_plan
+                
+                # Update our reference
+                self.floor_plan = loaded_floor_plan
+                
+                # Update all components
+                self.canvas.set_floor_plan(self.floor_plan)
+                self.properties_panel.set_floor_plan(self.floor_plan)
+                
+                # Update 3D viewer
+                self.viewer_3d.set_building(self.building)
+                
+                # Update floor selector
+                self.floor_selector.set_building(self.building)
+                self.floor_selector.set_current_floor(loaded_floor_plan.floor_level)
+                
+                # Update file tracking
+                self.current_file = None  # Not a native format, don't track
+                self.is_modified = True  # Mark as modified so user can save
+                self.update_title()
+                
+                logger.info(f"Import successful: {loaded_floor_plan.name}")
+                logger.info(f"  Walls: {len(loaded_floor_plan.walls)}, "
+                          f"Doors: {len([o for o in loaded_floor_plan.openings if 'DOOR' in o.opening_type.value])}, "
+                          f"Windows: {len([o for o in loaded_floor_plan.openings if 'WINDOW' in o.opening_type.value])}")
+                logger.info(f"  Furniture: {len(loaded_floor_plan.furniture)}, "
+                          f"Fixtures: {len(loaded_floor_plan.fixtures)}")
+                
+                # Show success message with stats
+                stats = (
+                    f"Successfully imported RoomPlan scan!\n\n"
+                    f"Name: {loaded_floor_plan.name}\n"
+                    f"Walls: {len(loaded_floor_plan.walls)}\n"
+                    f"Openings: {len(loaded_floor_plan.openings)}\n"
+                    f"Furniture: {len(loaded_floor_plan.furniture)}\n"
+                    f"Fixtures: {len(loaded_floor_plan.fixtures)}\n\n"
+                    f"You can now edit and save this floor plan."
+                )
+                
+                QMessageBox.information(
+                    self,
+                    "Import Successful",
+                    stats
+                )
+                
+                self.status_bar.showMessage(
+                    f"Imported: {Path(file_path).name}", 5000
+                )
+                
+            except Exception as e:
+                logger.error(f"Failed to import RoomPlan scan: {e}", exc_info=True)
+                QMessageBox.critical(
+                    self,
+                    "Import Error",
+                    f"Could not import RoomPlan scan:\n\n{str(e)}\n\n"
+                    f"Make sure the file is a valid RoomPlan JSON export."
                 )
     
     def save_file(self):

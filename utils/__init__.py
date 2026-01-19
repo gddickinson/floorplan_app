@@ -45,6 +45,15 @@ from .annotations import (
 from .export import (
     FloorPlanExporter
 )
+from .iphone_importer import (
+    iPhoneScanImporter,
+    import_iphone_scan
+)
+from .roomplan_importer import (
+    RoomPlanImporter,
+    import_roomplan_json,
+    import_roomplan_to_building
+)
 
 __all__ = [
     'setup_logging',
@@ -75,5 +84,10 @@ __all__ = [
     'TextAnnotation',
     'DimensionLine',
     'AnnotationManager',
-    'FloorPlanExporter'
+    'FloorPlanExporter',
+    'iPhoneScanImporter',
+    'import_iphone_scan',
+    'RoomPlanImporter',
+    'import_roomplan_json',
+    'import_roomplan_to_building'
 ]
