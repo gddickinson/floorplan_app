@@ -1,5 +1,7 @@
 """
 Utilities module for floor plan application.
+
+Updated to remove duplicate iphone_importer (functionality now in roomplan_importer).
 """
 
 from .logging_config import (
@@ -45,10 +47,11 @@ from .annotations import (
 from .export import (
     FloorPlanExporter
 )
-from .iphone_importer import (
-    iPhoneScanImporter,
-    import_iphone_scan
-)
+# REMOVED: iphone_importer (duplicate of roomplan_importer)
+# from .iphone_importer import (
+#     iPhoneScanImporter,
+#     import_iphone_scan
+# )
 from .roomplan_importer import (
     RoomPlanImporter,
     import_roomplan_json,
@@ -85,8 +88,7 @@ __all__ = [
     'DimensionLine',
     'AnnotationManager',
     'FloorPlanExporter',
-    'iPhoneScanImporter',
-    'import_iphone_scan',
+    # REMOVED: 'iPhoneScanImporter', 'import_iphone_scan'
     'RoomPlanImporter',
     'import_roomplan_json',
     'import_roomplan_to_building'

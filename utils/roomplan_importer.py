@@ -1,8 +1,13 @@
 """
-RoomPlan JSON Importer for Floor Plan Editor
+RoomPlan JSON Importer for Floor Plan Editor - FIXED VERSION
 
 Imports 3D room scans from iPhone LiDAR/RoomPlan into 2D floor plans.
 Converts meters to inches, extracts 2D footprint from 3D data.
+
+FIXES:
+- Corrected wall ordering algorithm to properly sequence walls in a closed loop
+- Fixed matrix interpretation (uses row 0 for direction vector)
+- Improved corner snapping and connection detection
 """
 
 import json
@@ -49,8 +54,15 @@ class RoomPlanImporter:
         'dryer': FixtureType.DRYER,
     }
     
-    def __init__(self):
+    def __init__(self, corner_snap_tolerance: float = 6.0):
+        """
+        Initialize RoomPlan importer.
+        
+        Args:
+            corner_snap_tolerance: Distance in inches within which to snap corners together
+        """
         self.scale_factor = self.METERS_TO_INCHES
+        self.corner_snap_tolerance = corner_snap_tolerance
     
     def import_from_file(self, filepath: str) -> FloorPlan:
         """
@@ -96,11 +108,27 @@ class RoomPlanImporter:
             ceiling_height=height
         )
         
-        # Import walls
+        # Import walls (returns list of walls, not yet added to floor_plan)
         walls_data = data.get('walls', [])
+        temp_walls = []
         if walls_data:
             logger.info(f"Importing {len(walls_data)} walls...")
-            self._import_walls(floor_plan, walls_data)
+            temp_walls = self._create_walls_from_data(walls_data)
+            
+            # Snap corners together
+            logger.info("Snapping corners together...")
+            snapped_count = self._snap_corners(temp_walls)
+            logger.info(f"Snapped {snapped_count} corners within {self.corner_snap_tolerance}\"")
+            
+            # Reorder walls for proper sequence
+            logger.info("Reordering walls into sequential loop...")
+            ordered_walls = self._order_walls_fixed(temp_walls)
+            
+            # Add ordered walls to floor plan
+            for wall in ordered_walls:
+                floor_plan.add_wall(wall)
+            
+            logger.info(f"Added {len(ordered_walls)} walls in proper sequence")
         
         # Import doors
         doors_data = data.get('doors', [])
@@ -123,8 +151,10 @@ class RoomPlanImporter:
         logger.info(f"Import complete: {floor_plan}")
         return floor_plan
     
-    def _import_walls(self, floor_plan: FloorPlan, walls_data: List[Dict]):
-        """Import wall data and create Wall objects."""
+    def _create_walls_from_data(self, walls_data: List[Dict]) -> List[Wall]:
+        """Create Wall objects from JSON data (doesn't add to floor plan yet)."""
+        
+        walls = []
         
         for wall_data in walls_data:
             try:
@@ -144,16 +174,13 @@ class RoomPlanImporter:
                 # Extract rotation from matrix to determine wall orientation
                 matrix = transform.get('matrix', None)
                 if matrix and len(matrix) >= 4:
-                    # Matrix is 4x4 transform matrix (column-major order)
-                    # Column 0 (right vector) = direction along wall width
-                    # Column 1 (up vector) = vertical direction  
-                    # Column 2 (forward vector) = normal to wall surface
-                    # Column 3 = position
+                    # RoomPlan matrix is in column-major order, but we treat it as row-major
+                    # for extracting the direction vector
+                    # Row 0 gives us the X-axis direction (wall extends along this)
+                    # Elements [0] = X component, [2] = Z component (for 2D top-down view)
                     
-                    # For walls, width dimension extends along the "right" vector (column 0)
-                    # Extract direction along wall from first column
-                    right_x = matrix[0][0]  # m00 - right vector X component
-                    right_z = matrix[2][0]  # m20 - right vector Z component
+                    right_x = matrix[0][0]  # Row 0, Column 0
+                    right_z = matrix[0][2]  # Row 0, Column 2
                     
                     # Normalize the direction vector (in XZ plane for top-down view)
                     length = math.sqrt(right_x * right_x + right_z * right_z)
@@ -196,12 +223,187 @@ class RoomPlanImporter:
                     height=wall_height
                 )
                 
-                floor_plan.add_wall(wall)
-                logger.debug(f"Added wall: {wall.start} to {wall.end}, height={wall_height:.1f}\"")
+                walls.append(wall)
+                logger.debug(f"Created wall: {wall.start} to {wall.end}, height={wall_height:.1f}\"")
                 
             except Exception as e:
                 logger.warning(f"Failed to import wall: {e}")
                 continue
+        
+        return walls
+    
+    def _snap_corners(self, walls: List[Wall]) -> int:
+        """
+        Snap wall endpoints that are close together.
+        
+        Fixes the issue where RoomPlan walls don't share exact vertices,
+        causing gaps in the floor plan even though corners appear connected.
+        
+        Args:
+            walls: List of Wall objects
+            
+        Returns:
+            Number of corners snapped
+        """
+        if not walls:
+            return 0
+        
+        snapped_count = 0
+        tolerance = self.corner_snap_tolerance
+        
+        # Collect all endpoints with their wall references
+        endpoints: List[Tuple[Wall, bool]] = []  # (wall, is_start)
+        for wall in walls:
+            endpoints.append((wall, True))   # start point
+            endpoints.append((wall, False))  # end point
+        
+        # Compare all pairs of endpoints
+        for i in range(len(endpoints)):
+            wall1, is_start1 = endpoints[i]
+            point1 = wall1.start if is_start1 else wall1.end
+            
+            for j in range(i + 1, len(endpoints)):
+                wall2, is_start2 = endpoints[j]
+                point2 = wall2.start if is_start2 else wall2.end
+                
+                # Calculate distance
+                distance = point1.distance_to(point2)
+                
+                # If close enough, snap to average position
+                if distance > 0 and distance < tolerance:
+                    # Calculate average position
+                    avg_point = Point(
+                        x=(point1.x + point2.x) / 2,
+                        y=(point1.y + point2.y) / 2
+                    )
+                    
+                    # Update both wall endpoints to use the same position
+                    if is_start1:
+                        wall1.start = avg_point
+                    else:
+                        wall1.end = avg_point
+                    
+                    if is_start2:
+                        wall2.start = avg_point
+                    else:
+                        wall2.end = avg_point
+                    
+                    snapped_count += 1
+                    logger.debug(f"Snapped corners: distance={distance:.2f}\" -> ({avg_point.x:.1f}, {avg_point.y:.1f})")
+        
+        return snapped_count
+    
+    def _order_walls_fixed(self, walls: List[Wall]) -> List[Wall]:
+        """
+        FIXED: Reorder walls into a sequential closed loop.
+        
+        This version properly traces wall connections by following the pattern:
+        wall[i].end connects to wall[i+1].start
+        
+        Args:
+            walls: List of Wall objects (with snapped corners)
+            
+        Returns:
+            Ordered list of walls forming a connected sequential chain
+        """
+        if not walls:
+            return []
+        
+        if len(walls) == 1:
+            return walls
+        
+        logger.debug("Building wall connectivity graph...")
+        
+        # Build connectivity graph: for each wall, find which other walls connect to its endpoints
+        graph = {}
+        tolerance = 0.1  # Very small tolerance since corners are already snapped
+        
+        for i, wall in enumerate(walls):
+            graph[i] = {'start_connects': [], 'end_connects': []}
+            
+            for j, other_wall in enumerate(walls):
+                if i == j:
+                    continue
+                
+                # Check if this wall's end connects to other wall's start
+                if wall.end.distance_to(other_wall.start) < tolerance:
+                    graph[i]['end_connects'].append(('start', j))
+                
+                # Check if this wall's end connects to other wall's end (would need flip)
+                if wall.end.distance_to(other_wall.end) < tolerance:
+                    graph[i]['end_connects'].append(('end', j))
+                
+                # Check if this wall's start connects to other wall's start
+                if wall.start.distance_to(other_wall.start) < tolerance:
+                    graph[i]['start_connects'].append(('start', j))
+                
+                # Check if this wall's start connects to other wall's end
+                if wall.start.distance_to(other_wall.end) < tolerance:
+                    graph[i]['start_connects'].append(('end', j))
+        
+        # Trace through the walls starting from wall 0
+        logger.debug("Tracing wall sequence...")
+        ordered = []
+        visited = set()
+        
+        # Start with first wall
+        current_idx = 0
+        current_wall = walls[current_idx]
+        ordered.append(current_wall)
+        visited.add(current_idx)
+        
+        # Follow connections from current wall's end
+        while len(visited) < len(walls):
+            connections = graph[current_idx]['end_connects']
+            
+            # Find the next unvisited wall
+            next_idx = None
+            needs_flip = False
+            
+            for endpoint_type, wall_idx in connections:
+                if wall_idx not in visited:
+                    next_idx = wall_idx
+                    needs_flip = (endpoint_type == 'end')  # If connecting end-to-end, need to flip
+                    break
+            
+            if next_idx is None:
+                logger.warning(f"Wall chain broken at wall {current_idx} - only found {len(visited)}/{len(walls)} walls")
+                break
+            
+            # Get the next wall
+            next_wall = walls[next_idx]
+            
+            # Flip if necessary so it starts where we ended
+            if needs_flip:
+                next_wall = Wall(
+                    start=next_wall.end,
+                    end=next_wall.start,
+                    thickness=next_wall.thickness,
+                    wall_type=next_wall.wall_type,
+                    height=next_wall.height
+                )
+                logger.debug(f"Flipped wall {next_idx} for proper orientation")
+            
+            ordered.append(next_wall)
+            visited.add(next_idx)
+            current_idx = next_idx
+        
+        if len(ordered) != len(walls):
+            logger.warning(f"Could not order all walls: {len(ordered)}/{len(walls)} in chain")
+            logger.warning("Returning original order")
+            return walls
+        
+        # Verify the loop closes
+        first_wall = ordered[0]
+        last_wall = ordered[-1]
+        closing_distance = last_wall.end.distance_to(first_wall.start)
+        
+        if closing_distance < 1.0:
+            logger.info(f"✓ Walls form a closed loop (closing gap: {closing_distance:.3f}\")")
+        else:
+            logger.warning(f"⚠ Walls do not close properly (gap: {closing_distance:.2f}\")")
+        
+        return ordered
     
     def _import_doors(self, floor_plan: FloorPlan, doors_data: List[Dict]):
         """Import door data and create Opening objects."""
@@ -358,7 +560,7 @@ class RoomPlanImporter:
                     floor_plan.add_furniture(furniture)
                     logger.debug(f"Added furniture: {category} at ({pos_x:.1f}, {pos_z:.1f})")
                 else:
-                    logger.debug(f"Skipping unknown object category: {category}")
+                    logger.debug(f"Unknown object category: {category}")
                     
             except Exception as e:
                 logger.warning(f"Failed to import object: {e}")
@@ -373,80 +575,90 @@ class RoomPlanImporter:
         nearest_wall = None
         
         for wall in floor_plan.walls:
-            distance = self._point_to_line_distance(point, wall.start, wall.end)
+            # Calculate perpendicular distance to wall
+            distance = self._point_to_wall_distance(point, wall)
+            
             if distance < min_distance:
                 min_distance = distance
                 nearest_wall = wall
         
         return nearest_wall
     
-    def _point_to_line_distance(self, point: Point, line_start: Point, line_end: Point) -> float:
-        """Calculate perpendicular distance from point to line segment."""
-        # Vector from line_start to line_end
-        dx = line_end.x - line_start.x
-        dy = line_end.y - line_start.y
+    def _point_to_wall_distance(self, point: Point, wall: Wall) -> float:
+        """Calculate perpendicular distance from point to wall."""
+        # Vector from wall start to end
+        wall_vec_x = wall.end.x - wall.start.x
+        wall_vec_y = wall.end.y - wall.start.y
+        wall_length_sq = wall_vec_x * wall_vec_x + wall_vec_y * wall_vec_y
         
-        if dx == 0 and dy == 0:
-            # Line is a point
-            return point.distance_to(line_start)
+        if wall_length_sq < 0.001:
+            # Wall is essentially a point
+            return point.distance_to(wall.start)
         
-        # Parameter t represents position along line (0 to 1 for segment)
-        t = ((point.x - line_start.x) * dx + (point.y - line_start.y) * dy) / (dx*dx + dy*dy)
-        t = max(0, min(1, t))  # Clamp to segment
+        # Vector from wall start to point
+        point_vec_x = point.x - wall.start.x
+        point_vec_y = point.y - wall.start.y
         
-        # Nearest point on segment
-        nearest_x = line_start.x + t * dx
-        nearest_y = line_start.y + t * dy
-        nearest = Point(x=nearest_x, y=nearest_y)
+        # Project point onto wall line
+        t = (point_vec_x * wall_vec_x + point_vec_y * wall_vec_y) / wall_length_sq
+        t = max(0, min(1, t))  # Clamp to [0, 1]
         
-        return point.distance_to(nearest)
+        # Closest point on wall
+        closest_x = wall.start.x + t * wall_vec_x
+        closest_y = wall.start.y + t * wall_vec_y
+        
+        # Distance to closest point
+        dx = point.x - closest_x
+        dy = point.y - closest_y
+        return math.sqrt(dx * dx + dy * dy)
     
     def _calculate_position_on_wall(self, wall: Wall, point: Point) -> float:
         """
-        Calculate normalized position (0-1) of a point along a wall.
+        Calculate position along wall (0.0 to 1.0) where point projects.
         
         Args:
-            wall: Wall object
-            point: Point near the wall
+            wall: The wall
+            point: The point to project
             
         Returns:
-            Position from 0 (start) to 1 (end)
+            Position from 0.0 (start) to 1.0 (end)
         """
-        # Vector from wall start to end
-        dx = wall.end.x - wall.start.x
-        dy = wall.end.y - wall.start.y
-        wall_length_sq = dx*dx + dy*dy
+        wall_vec_x = wall.end.x - wall.start.x
+        wall_vec_y = wall.end.y - wall.start.y
+        wall_length_sq = wall_vec_x * wall_vec_x + wall_vec_y * wall_vec_y
         
-        if wall_length_sq == 0:
+        if wall_length_sq < 0.001:
             return 0.5
         
-        # Project point onto wall line
-        t = ((point.x - wall.start.x) * dx + (point.y - wall.start.y) * dy) / wall_length_sq
+        point_vec_x = point.x - wall.start.x
+        point_vec_y = point.y - wall.start.y
         
-        # Clamp to [0, 1]
+        t = (point_vec_x * wall_vec_x + point_vec_y * wall_vec_y) / wall_length_sq
         return max(0.0, min(1.0, t))
 
 
-def import_roomplan_json(filepath: str) -> FloorPlan:
+def import_roomplan_json(filepath: str, corner_snap_tolerance: float = 6.0) -> FloorPlan:
     """
     Convenience function to import a RoomPlan JSON file.
     
     Args:
         filepath: Path to JSON file from iPhone RoomPlan scanner
+        corner_snap_tolerance: Distance in inches within which to snap corners together (default: 6.0")
         
     Returns:
-        FloorPlan object with imported data
+        FloorPlan object with imported data (corners snapped, walls ordered)
         
     Example:
         >>> floor_plan = import_roomplan_json("office.json")
         >>> print(f"Imported {len(floor_plan.walls)} walls")
     """
-    importer = RoomPlanImporter()
+    importer = RoomPlanImporter(corner_snap_tolerance=corner_snap_tolerance)
     return importer.import_from_file(filepath)
 
 
 def import_roomplan_to_building(filepath: str, building: Building, 
-                                 floor_level: int = 0) -> FloorPlan:
+                                 floor_level: int = 0,
+                                 corner_snap_tolerance: float = 6.0) -> FloorPlan:
     """
     Import RoomPlan JSON directly into a Building at a specific floor level.
     
@@ -454,6 +666,7 @@ def import_roomplan_to_building(filepath: str, building: Building,
         filepath: Path to JSON file
         building: Building object to add floor to
         floor_level: Floor level number (0 = ground, 1 = first floor, etc.)
+        corner_snap_tolerance: Distance in inches within which to snap corners together (default: 6.0")
         
     Returns:
         The created FloorPlan object
@@ -463,7 +676,7 @@ def import_roomplan_to_building(filepath: str, building: Building,
         >>> ground_floor = import_roomplan_to_building("living_room.json", building, 0)
         >>> first_floor = import_roomplan_to_building("bedroom.json", building, 1)
     """
-    importer = RoomPlanImporter()
+    importer = RoomPlanImporter(corner_snap_tolerance=corner_snap_tolerance)
     floor_plan = importer.import_from_file(filepath)
     
     # Update floor level
