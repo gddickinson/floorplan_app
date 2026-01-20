@@ -376,3 +376,4 @@ class MeasurementTool:
         if self.temp_start:
             return Measurement(self.temp_start, current_point, "temp")
         return None
+

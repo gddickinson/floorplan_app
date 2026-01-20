@@ -11,6 +11,7 @@ from copy import deepcopy
 
 from core import FloorPlan
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -294,3 +295,4 @@ class UndoStack:
     def get_history(self) -> List[str]:
         """Get list of command descriptions in history."""
         return [cmd.description() for cmd in self.commands]
+

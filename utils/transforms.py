@@ -326,3 +326,4 @@ class ArrayTool:
         
         logger.info(f"Created circular array of {count} objects (radius: {radius}\")")
         return objects
+

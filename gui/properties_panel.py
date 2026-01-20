@@ -15,7 +15,8 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import pyqtSignal, Qt
 from PyQt6.QtGui import QColor
 
-from core import Wall, Opening, Room, WallType, OpeningType
+from core import Wall, Opening, Room, WallType, OpeningType, Point
+from core import Furniture, Fixture, Stair, FurnitureType, FixtureType
 from utils import format_dimension, feet_to_inches, inches_to_feet
 
 logger = logging.getLogger(__name__)
@@ -39,12 +40,15 @@ class PropertiesPanel(QWidget):
         
         self._setup_ui()
         
+        # Initialize object properties widgets
+        self._init_object_properties()
+        
         logger.info("Properties panel initialized")
     
     def _setup_ui(self):
         """Setup the UI layout."""
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(5, 5, 5, 5)
+        self.main_layout = QVBoxLayout(self)
+        self.main_layout.setContentsMargins(5, 5, 5, 5)
         
         # Set maximum width to prevent panel from being too wide
         self.setMaximumWidth(350)
@@ -52,7 +56,7 @@ class PropertiesPanel(QWidget):
         # Title
         title = QLabel("<b>Properties</b>")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.addWidget(title)
+        self.main_layout.addWidget(title)
         
         # Scroll area for properties
         scroll = QScrollArea()
@@ -63,7 +67,7 @@ class PropertiesPanel(QWidget):
         self.properties_layout = QVBoxLayout(self.properties_widget)
         
         scroll.setWidget(self.properties_widget)
-        layout.addWidget(scroll)
+        self.main_layout.addWidget(scroll)
         
         # Initially show "nothing selected" message
         self._show_no_selection()
@@ -398,3 +402,255 @@ class PropertiesPanel(QWidget):
             button.setStyleSheet(f"background-color: {room.color};")
             self.property_changed.emit(room)
             logger.info(f"Updated room {room.id[:8]} color to {room.color}")
+
+    def _init_object_properties(self):
+        """Initialize object properties widgets."""
+        from PyQt6.QtWidgets import (
+            QGroupBox, QFormLayout, QHBoxLayout, QLabel,
+            QDoubleSpinBox, QComboBox, QLineEdit, QPushButton
+        )
+        
+        # Create object properties group
+        self.object_properties_group = QGroupBox("Object Properties")
+        self.object_properties_layout = QFormLayout()
+        self.object_properties_group.setLayout(self.object_properties_layout)
+        
+        # Position
+        self.obj_x_spin = QDoubleSpinBox()
+        self.obj_x_spin.setRange(-10000, 10000)
+        self.obj_x_spin.setDecimals(2)
+        self.obj_x_spin.setSuffix('"')
+        self.obj_x_spin.valueChanged.connect(self._on_object_property_changed)
+        
+        self.obj_y_spin = QDoubleSpinBox()
+        self.obj_y_spin.setRange(-10000, 10000)
+        self.obj_y_spin.setDecimals(2)
+        self.obj_y_spin.setSuffix('"')
+        self.obj_y_spin.valueChanged.connect(self._on_object_property_changed)
+        
+        # Size
+        self.obj_width_spin = QDoubleSpinBox()
+        self.obj_width_spin.setRange(6, 10000)
+        self.obj_width_spin.setDecimals(2)
+        self.obj_width_spin.setSuffix('"')
+        self.obj_width_spin.valueChanged.connect(self._on_object_property_changed)
+        
+        self.obj_depth_spin = QDoubleSpinBox()
+        self.obj_depth_spin.setRange(6, 10000)
+        self.obj_depth_spin.setDecimals(2)
+        self.obj_depth_spin.setSuffix('"')
+        self.obj_depth_spin.valueChanged.connect(self._on_object_property_changed)
+        
+        # Rotation
+        self.obj_rotation_spin = QDoubleSpinBox()
+        self.obj_rotation_spin.setRange(0, 360)
+        self.obj_rotation_spin.setDecimals(1)
+        self.obj_rotation_spin.setSuffix('°')
+        self.obj_rotation_spin.setWrapping(True)
+        self.obj_rotation_spin.valueChanged.connect(self._on_object_property_changed)
+        
+        # Type
+        self.obj_type_combo = QComboBox()
+        self.obj_type_combo.currentTextChanged.connect(self._on_object_type_changed)
+        
+        # Name
+        self.obj_name_edit = QLineEdit()
+        self.obj_name_edit.textChanged.connect(self._on_object_name_changed)
+        
+        # Add to layout
+        pos_layout = QHBoxLayout()
+        pos_layout.addWidget(QLabel("X:"))
+        pos_layout.addWidget(self.obj_x_spin)
+        pos_layout.addWidget(QLabel("Y:"))
+        pos_layout.addWidget(self.obj_y_spin)
+        
+        size_layout = QHBoxLayout()
+        size_layout.addWidget(QLabel("W:"))
+        size_layout.addWidget(self.obj_width_spin)
+        size_layout.addWidget(QLabel("D:"))
+        size_layout.addWidget(self.obj_depth_spin)
+        
+        self.object_properties_layout.addRow("Position:", pos_layout)
+        self.object_properties_layout.addRow("Size:", size_layout)
+        self.object_properties_layout.addRow("Rotation:", self.obj_rotation_spin)
+        self.object_properties_layout.addRow("Type:", self.obj_type_combo)
+        self.object_properties_layout.addRow("Name:", self.obj_name_edit)
+        
+        # Delete button
+        self.delete_object_btn = QPushButton("Delete Object")
+        self.delete_object_btn.clicked.connect(self._on_delete_object)
+        self.object_properties_layout.addRow("", self.delete_object_btn)
+        
+        # Add to main layout
+        self.main_layout.addWidget(self.object_properties_group)
+        
+        # Initially hide
+        self.object_properties_group.hide()
+        
+        # Track current object
+        self.current_object = None
+        self._updating_from_object = False
+    
+    def show_object_properties(self, obj):
+        """Show properties for the given object."""
+        if obj is None:
+            self.object_properties_group.hide()
+            self.current_object = None
+            return
+        
+        self.current_object = obj
+        self._updating_from_object = True
+        
+        # Update type combo
+        self.obj_type_combo.clear()
+        if isinstance(obj, Furniture):
+            self.object_properties_group.setTitle("Furniture Properties")
+            for ftype in FurnitureType:
+                self.obj_type_combo.addItem(ftype.value.replace('_', ' ').title())
+            current_type = obj.furniture_type.value.replace('_', ' ').title()
+            index = self.obj_type_combo.findText(current_type)
+            if index >= 0:
+                self.obj_type_combo.setCurrentIndex(index)
+                
+        elif isinstance(obj, Fixture):
+            self.object_properties_group.setTitle("Fixture Properties")
+            for ftype in FixtureType:
+                self.obj_type_combo.addItem(ftype.value.replace('_', ' ').title())
+            current_type = obj.fixture_type.value.replace('_', ' ').title()
+            index = self.obj_type_combo.findText(current_type)
+            if index >= 0:
+                self.obj_type_combo.setCurrentIndex(index)
+                
+        elif isinstance(obj, Stair):
+            self.object_properties_group.setTitle("Stair Properties")
+            self.obj_type_combo.addItem("Staircase")
+            self.obj_type_combo.setEnabled(False)
+        
+        # Update values
+        if isinstance(obj, Stair):
+            # For stairs, compute center position from start and end
+            cx = (obj.start.x + obj.end.x) / 2
+            cy = (obj.start.y + obj.end.y) / 2
+            self.obj_x_spin.setValue(cx)
+            self.obj_y_spin.setValue(cy)
+            self.obj_width_spin.setValue(obj.width)
+            self.obj_depth_spin.setValue(obj.length())  # Use length for depth
+            self.obj_rotation_spin.setValue(obj.rotation)
+        else:
+            # For furniture and fixtures
+            self.obj_x_spin.setValue(obj.position.x)
+            self.obj_y_spin.setValue(obj.position.y)
+            self.obj_width_spin.setValue(obj.width)
+            self.obj_depth_spin.setValue(obj.depth)
+            self.obj_rotation_spin.setValue(obj.rotation)
+        
+        # Name
+        if hasattr(obj, 'name'):
+            self.obj_name_edit.setText(obj.name or "")
+            self.obj_name_edit.setEnabled(True)
+        else:
+            self.obj_name_edit.setText("")
+            self.obj_name_edit.setEnabled(False)
+        
+        self.object_properties_group.show()
+        self._updating_from_object = False
+    
+    def _on_object_property_changed(self):
+        """Handle changes to object properties."""
+        if self._updating_from_object or not self.current_object:
+            return
+        
+        # Update object
+        if isinstance(self.current_object, Stair):
+            # For stairs, update start and end points to achieve new center position
+            old_cx = (self.current_object.start.x + self.current_object.end.x) / 2
+            old_cy = (self.current_object.start.y + self.current_object.end.y) / 2
+            new_cx = self.obj_x_spin.value()
+            new_cy = self.obj_y_spin.value()
+            dx = new_cx - old_cx
+            dy = new_cy - old_cy
+            
+            # Move start and end
+            self.current_object.start = Point(
+                self.current_object.start.x + dx,
+                self.current_object.start.y + dy
+            )
+            self.current_object.end = Point(
+                self.current_object.end.x + dx,
+                self.current_object.end.y + dy
+            )
+            
+            # Update width and rotation
+            self.current_object.width = self.obj_width_spin.value()
+            self.current_object.rotation = self.obj_rotation_spin.value()
+            
+            # For depth changes (length), scale start/end points
+            new_length = self.obj_depth_spin.value()
+            current_length = self.current_object.length()
+            if current_length > 0 and abs(new_length - current_length) > 0.01:
+                scale = new_length / current_length
+                cx = (self.current_object.start.x + self.current_object.end.x) / 2
+                cy = (self.current_object.start.y + self.current_object.end.y) / 2
+                self.current_object.start = Point(
+                    cx + (self.current_object.start.x - cx) * scale,
+                    cy + (self.current_object.start.y - cy) * scale
+                )
+                self.current_object.end = Point(
+                    cx + (self.current_object.end.x - cx) * scale,
+                    cy + (self.current_object.end.y - cy) * scale
+                )
+        else:
+            # For furniture and fixtures
+            self.current_object.position.x = self.obj_x_spin.value()
+            self.current_object.position.y = self.obj_y_spin.value()
+            self.current_object.width = self.obj_width_spin.value()
+            self.current_object.depth = self.obj_depth_spin.value()
+            self.current_object.rotation = self.obj_rotation_spin.value()
+        
+        # Trigger canvas update
+        if hasattr(self, 'canvas') and self.canvas:
+            self.canvas.update()
+    
+    def _on_object_type_changed(self, type_text: str):
+        """Handle changes to object type."""
+        if self._updating_from_object or not self.current_object:
+            return
+        
+        # Convert display text back to enum value
+        enum_value = type_text.replace(' ', '_').upper()
+        
+        if isinstance(self.current_object, Furniture):
+            try:
+                new_type = FurnitureType(enum_value.lower())
+                self.current_object.furniture_type = new_type
+            except ValueError:
+                pass
+        
+        elif isinstance(self.current_object, Fixture):
+            try:
+                new_type = FixtureType(enum_value.lower())
+                self.current_object.fixture_type = new_type
+            except ValueError:
+                pass
+        
+        # Trigger canvas update
+        if hasattr(self, 'canvas') and self.canvas:
+            self.canvas.update()
+    
+    def _on_object_name_changed(self, name: str):
+        """Handle changes to object name."""
+        if self._updating_from_object or not self.current_object:
+            return
+        
+        if hasattr(self.current_object, 'name'):
+            self.current_object.name = name
+    
+    def _on_delete_object(self):
+        """Handle delete object button click."""
+        if not self.current_object:
+            return
+        
+        # Tell canvas to delete the selected object
+        if hasattr(self, 'canvas') and self.canvas:
+            self.canvas.delete_selected_object()
+

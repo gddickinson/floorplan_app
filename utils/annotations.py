@@ -292,3 +292,4 @@ class AnnotationManager:
         logger.info(f"Loaded {len(manager.text_annotations)} annotations, "
                    f"{len(manager.dimension_lines)} dimensions")
         return manager
+

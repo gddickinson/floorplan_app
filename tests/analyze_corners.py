@@ -142,3 +142,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     analyze_scan_corners(sys.argv[1])
+

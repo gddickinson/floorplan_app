@@ -415,6 +415,10 @@ class MainWindow(QMainWindow):
         self.canvas.plan_modified.connect(self.on_plan_modified)
         self.canvas.status_message.connect(self.status_bar.showMessage)
         self.canvas.selection_changed.connect(self.on_selection_changed)
+        
+        # Connect object selection signal to properties panel
+        self.canvas.object_selected.connect(self.properties_panel.show_object_properties)
+        self.properties_panel.canvas = self.canvas
         self.properties_panel.property_changed.connect(self.on_property_changed)
         self.object_library.object_selected.connect(self.on_object_selected)
         self.floor_selector.floor_changed.connect(self.on_floor_changed)
@@ -929,3 +933,4 @@ class MainWindow(QMainWindow):
                 return
         
         super().keyPressEvent(event)
+

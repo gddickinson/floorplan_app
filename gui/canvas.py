@@ -24,6 +24,11 @@ from core import (
 )
 from utils import AppConfig, format_dimension
 from utils.measurements import MeasurementTool
+from .object_selection import (
+    SelectableObject, ObjectTransformHandler, TransformMode
+)
+from utils.undo_commands import ObjectState, TransformObjectCommand, RemoveObjectCommand
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +60,7 @@ class FloorPlanCanvas(QWidget):
     
     plan_modified = pyqtSignal()
     selection_changed = pyqtSignal(object)  # Selected object or None
+    object_selected = pyqtSignal(object)  # Emits selected object or None
     status_message = pyqtSignal(str)
     
     def __init__(self, floor_plan: Optional[FloorPlan] = None, parent=None):
@@ -94,6 +100,13 @@ class FloorPlanCanvas(QWidget):
         self.setMouseTracking(True)
         self.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         
+
+        # Object selection state
+        self.selectable_objects = []
+        self.transform_handler = ObjectTransformHandler(self.scale)
+        self.selected_object = None
+        self.is_transforming = False
+
         logger.info("Canvas initialized")
     
     def set_floor_plan(self, floor_plan: FloorPlan):
@@ -104,6 +117,7 @@ class FloorPlanCanvas(QWidget):
         self.temp_wall_start = None
         self.fit_to_view()
         self.update()
+        self.refresh_selectable_objects()
         logger.info(f"Loaded floor plan: {floor_plan.name}")
     
     def set_draw_mode(self, mode: str):
@@ -725,6 +739,28 @@ class FloorPlanCanvas(QWidget):
     
     def mousePressEvent(self, event: QMouseEvent):
         """Handle mouse press events."""
+        
+        # Handle object selection and transformation
+        if event.button() == Qt.MouseButton.LeftButton:
+            world_point = self.screen_to_world(event.position())
+            
+            if self.draw_mode == DrawMode.SELECT:
+                # Check if clicking on handle of selected object
+                if self.selected_object:
+                    mode = self.transform_handler.get_handle_at_point(world_point)
+                    if mode != TransformMode.NONE:
+                        # Store initial state for undo
+                        self.transform_start_state = ObjectState.from_object(
+                            self.selected_object.obj
+                        )
+                        self.transform_handler.start_transform(world_point, mode)
+                        self.is_transforming = True
+                        return
+                
+                # Try to select an object
+                if self.select_object_at_point(world_point):
+                    return
+
         if event.button() == Qt.MouseButton.MiddleButton:
             self.is_panning = True
             self.last_mouse_pos = event.position()
@@ -1039,6 +1075,20 @@ class FloorPlanCanvas(QWidget):
     
     def mouseMoveEvent(self, event: QMouseEvent):
         """Handle mouse move events."""
+        
+        world_point = self.screen_to_world(event.position())
+        
+        # Handle object transformation
+        if self.is_transforming:
+            self.transform_handler.update_transform(world_point)
+            self.update()
+            return
+        
+        # Update cursor based on what's under mouse
+        if self.draw_mode == DrawMode.SELECT and self.selected_object:
+            mode = self.transform_handler.get_handle_at_point(world_point)
+            self._update_cursor_for_mode(mode)
+
         if self.is_panning and self.last_mouse_pos:
             delta = event.position() - self.last_mouse_pos
             self.offset_x += delta.x()
@@ -1061,6 +1111,38 @@ class FloorPlanCanvas(QWidget):
     
     def mouseReleaseEvent(self, event: QMouseEvent):
         """Handle mouse release events."""
+        
+        # End object transformation
+        if event.button() == Qt.MouseButton.LeftButton and self.is_transforming:
+            self.transform_handler.end_transform()
+            
+            # Create undo command
+            if hasattr(self, 'transform_start_state'):
+                old_state = self.transform_start_state
+                new_state = ObjectState.from_object(self.selected_object.obj)
+                
+                # Only add if something changed
+                if (old_state.position.x != new_state.position.x or
+                    old_state.position.y != new_state.position.y or
+                    old_state.width != new_state.width or
+                    old_state.depth != new_state.depth or
+                    old_state.rotation != new_state.rotation):
+                    
+                    command = TransformObjectCommand(
+                        self.selected_object.obj,
+                        old_state,
+                        new_state,
+                        "Transform Object"
+                    )
+                    if hasattr(self, 'undo_stack') and self.undo_stack:
+                        self.undo_stack.push(command)
+                
+                delattr(self, 'transform_start_state')
+            
+            self.is_transforming = False
+            self.update()
+            return
+
         if event.button() == Qt.MouseButton.MiddleButton:
             self.is_panning = False
             self.setCursor(Qt.CursorShape.ArrowCursor)
@@ -1071,6 +1153,20 @@ class FloorPlanCanvas(QWidget):
         self.zoom(delta, event.position())
     
     def keyPressEvent(self, event):
+        # Handle Delete key
+        if event.key() == Qt.Key.Key_Delete:
+            if self.selected_object:
+                self.delete_selected_object()
+                event.accept()
+                return
+        
+        # Handle Escape key  
+        if event.key() == Qt.Key.Key_Escape:
+            self.set_selected_object(None)
+            event.accept()
+            return
+        
+
         """Handle keyboard events."""
         if event.key() == Qt.Key.Key_Delete:
             if self.selected_wall:
@@ -1126,3 +1222,96 @@ class FloorPlanCanvas(QWidget):
             # Clear measurements with 'C' key in measure mode
             self.measurement_tool.clear_measurements()
             self.update()
+
+    def refresh_selectable_objects(self):
+        """Refresh the list of selectable objects from the floor plan."""
+        if not self.floor_plan:
+            self.selectable_objects = []
+            return
+        
+        self.selectable_objects = []
+        
+        # Add all furniture
+        for furniture in self.floor_plan.furniture:
+            self.selectable_objects.append(SelectableObject(furniture))
+        
+        # Add all fixtures
+        for fixture in self.floor_plan.fixtures:
+            self.selectable_objects.append(SelectableObject(fixture))
+        
+        # Add all stairs
+        for stair in self.floor_plan.stairs:
+            self.selectable_objects.append(SelectableObject(stair))
+        
+        logger.debug(f"Refreshed {len(self.selectable_objects)} selectable objects")
+    
+    def select_object_at_point(self, point: Point) -> bool:
+        """Select an object at the given point."""
+        # Check if clicking on currently selected object's handle
+        if self.selected_object:
+            mode = self.transform_handler.get_handle_at_point(point)
+            if mode != TransformMode.NONE:
+                return True
+        
+        # Find object at point
+        for obj in reversed(self.selectable_objects):
+            if obj.contains_point(point):
+                self.set_selected_object(obj)
+                return True
+        
+        # No object found - deselect
+        self.set_selected_object(None)
+        return False
+    
+    def set_selected_object(self, obj):
+        """Set the currently selected object."""
+        self.selected_object = obj
+        self.transform_handler.set_selected_object(obj)
+        
+        # Emit signal for properties panel
+        actual_obj = obj.obj if obj else None
+        self.object_selected.emit(actual_obj)
+        
+        self.update()
+    
+    def get_selected_object(self):
+        """Get the currently selected object."""
+        if self.selected_object:
+            return self.selected_object.obj
+        return None
+    
+    def delete_selected_object(self):
+        """Delete the currently selected object."""
+        if not self.selected_object or not self.floor_plan:
+            return
+        
+        obj = self.selected_object.obj
+        
+        # Create undo command
+        command = RemoveObjectCommand(self.floor_plan, obj)
+        if hasattr(self, 'undo_stack') and self.undo_stack:
+            self.undo_stack.push(command)
+        else:
+            # Execute directly if no undo stack
+            command.execute()
+        
+        # Deselect and refresh
+        self.set_selected_object(None)
+        self.refresh_selectable_objects()
+        self.update()
+    
+    def _update_cursor_for_mode(self, mode: TransformMode):
+        """Update cursor based on transformation mode."""
+        cursor_map = {
+            TransformMode.MOVE: Qt.CursorShape.SizeAllCursor,
+            TransformMode.RESIZE_TL: Qt.CursorShape.SizeFDiagCursor,
+            TransformMode.RESIZE_TR: Qt.CursorShape.SizeBDiagCursor,
+            TransformMode.RESIZE_BL: Qt.CursorShape.SizeBDiagCursor,
+            TransformMode.RESIZE_BR: Qt.CursorShape.SizeFDiagCursor,
+            TransformMode.ROTATE: Qt.CursorShape.CrossCursor,
+            TransformMode.NONE: Qt.CursorShape.ArrowCursor,
+        }
+        
+        cursor = cursor_map.get(mode, Qt.CursorShape.ArrowCursor)
+        self.setCursor(cursor)
+

@@ -218,3 +218,4 @@ class Level:
         return (f"Level('{self.name}': {len(self.walls)} walls, "
                 f"{len(self.openings)} openings, {len(self.rooms)} rooms, "
                 f"elevation={self.elevation}\")")
+

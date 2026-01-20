@@ -364,18 +364,43 @@ struct MappingFloorPlanView: View {
     
     private func drawObjects(context: GraphicsContext, objects: [CapturedRoom.Object], offset: CGPoint, scale: Float) {
         for object in objects {
-            let pos = object.transform.columns.3
+            let transform = object.transform
+            let pos = transform.columns.3
             let width = object.dimensions.x / 2
             let depth = object.dimensions.z / 2
+            
+            // Extract rotation (same method as walls)
+            let rightX = Float(transform.columns.0.x)  // Right vector X
+            let rightZ = Float(transform.columns.0.z)  // Right vector Z
+            let yaw = atan2(rightZ, rightX)  // Rotation in X-Z plane
             
             let screenX = offset.x + CGFloat(Float(pos.x) * scale)
             let screenZ = offset.y + CGFloat(Float(pos.z) * scale)
             let screenW = CGFloat(width * scale)
             let screenD = CGFloat(depth * scale)
             
-            let rect = CGRect(x: screenX - screenW, y: screenZ - screenD, width: screenW * 2, height: screenD * 2)
-            context.fill(Path(roundedRect: rect, cornerRadius: 3), with: .color(.orange.opacity(0.4)))
-            context.stroke(Path(roundedRect: rect, cornerRadius: 3), with: .color(.orange), lineWidth: 1.5)
+            // Create rectangle path
+            let rect = CGRect(x: -screenW, y: -screenD, width: screenW * 2, height: screenD * 2)
+            let rectPath = Path(roundedRect: rect, cornerRadius: 3)
+            
+            // Apply rotation and translation transform
+            var pathTransform = CGAffineTransform.identity
+            pathTransform = pathTransform.translatedBy(x: screenX, y: screenZ)
+            pathTransform = pathTransform.rotated(by: CGFloat(yaw))
+            
+            let transformedPath = rectPath.applying(pathTransform)
+            
+            // Draw rotated object
+            context.fill(transformedPath, with: .color(.orange.opacity(0.4)))
+            context.stroke(transformedPath, with: .color(.orange), lineWidth: 1.5)
+            
+            // Draw orientation indicator (small line showing "front")
+            var orientationPath = Path()
+            orientationPath.move(to: CGPoint(x: 0, y: 0))
+            orientationPath.addLine(to: CGPoint(x: 0, y: -screenD * 1.3))
+            
+            let orientationTransformed = orientationPath.applying(pathTransform)
+            context.stroke(orientationTransformed, with: .color(.orange), style: StrokeStyle(lineWidth: 2, lineCap: .round))
         }
     }
     

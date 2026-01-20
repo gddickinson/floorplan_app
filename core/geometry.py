@@ -848,3 +848,4 @@ class Building:
         levels = self.get_floor_levels()
         return (f"Building('{self.name}': {len(self.floors)} floors, "
                 f"Levels {min(levels)} to {max(levels)})")
+

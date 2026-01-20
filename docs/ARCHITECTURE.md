@@ -528,3 +528,4 @@ The modular design means you can:
 - Scale to larger, more complex plans
 
 Happy extending! 🚀
+

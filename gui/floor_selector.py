@@ -368,3 +368,4 @@ class AddFloorDialog(QDialog):
         if self.copy_check.isChecked():
             return self.copy_combo.currentData()
         return None
+

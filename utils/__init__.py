@@ -12,6 +12,14 @@ from .logging_config import (
     inches_to_feet,
     feet_to_inches
 )
+
+# Import object transformation commands separately to avoid circular import
+from .undo_commands import (
+    ObjectState,
+    TransformObjectCommand,
+    AddObjectCommand,
+    RemoveObjectCommand
+)
 from .undo_stack import (
     UndoStack,
     Command,

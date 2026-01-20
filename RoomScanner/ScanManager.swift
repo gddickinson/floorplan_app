@@ -170,6 +170,13 @@ class ScanManager: ObservableObject {
     
     private func createDoorDict(from door: CapturedRoom.Surface) -> [String: Any] {
         let t = door.transform
+        
+        // Extract rotation (same method as walls - using right vector in X-Z plane)
+        let rightX = Float(t.columns.0.x)
+        let rightZ = Float(t.columns.0.z)
+        let yawRadians = atan2(rightZ, rightX)
+        let yawDegrees = yawRadians * 180.0 / .pi
+        
         return [
             "id": door.identifier.uuidString,
             "dimensions": [
@@ -182,6 +189,10 @@ class ScanManager: ObservableObject {
                     "x": Float(t.columns.3.x),
                     "y": Float(t.columns.3.y),
                     "z": Float(t.columns.3.z)
+                ],
+                "rotation": [
+                    "yaw_radians": yawRadians,
+                    "yaw_degrees": yawDegrees
                 ]
             ]
         ]
@@ -189,6 +200,13 @@ class ScanManager: ObservableObject {
     
     private func createWindowDict(from window: CapturedRoom.Surface) -> [String: Any] {
         let t = window.transform
+        
+        // Extract rotation (same method as walls - using right vector in X-Z plane)
+        let rightX = Float(t.columns.0.x)
+        let rightZ = Float(t.columns.0.z)
+        let yawRadians = atan2(rightZ, rightX)
+        let yawDegrees = yawRadians * 180.0 / .pi
+        
         return [
             "id": window.identifier.uuidString,
             "dimensions": [
@@ -201,6 +219,10 @@ class ScanManager: ObservableObject {
                     "x": Float(t.columns.3.x),
                     "y": Float(t.columns.3.y),
                     "z": Float(t.columns.3.z)
+                ],
+                "rotation": [
+                    "yaw_radians": yawRadians,
+                    "yaw_degrees": yawDegrees
                 ]
             ]
         ]
@@ -208,6 +230,13 @@ class ScanManager: ObservableObject {
     
     private func createObjectDict(from object: CapturedRoom.Object) -> [String: Any] {
         let t = object.transform
+        
+        // Extract rotation (same method as walls - using right vector in X-Z plane)
+        let rightX = Float(t.columns.0.x)
+        let rightZ = Float(t.columns.0.z)
+        let yawRadians = atan2(rightZ, rightX)
+        let yawDegrees = yawRadians * 180.0 / .pi
+        
         return [
             "id": object.identifier.uuidString,
             "category": String(describing: object.category),
@@ -221,6 +250,10 @@ class ScanManager: ObservableObject {
                     "x": Float(t.columns.3.x),
                     "y": Float(t.columns.3.y),
                     "z": Float(t.columns.3.z)
+                ],
+                "rotation": [
+                    "yaw_radians": yawRadians,
+                    "yaw_degrees": yawDegrees
                 ]
             ],
             "confidence": String(describing: object.confidence)

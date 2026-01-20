@@ -507,6 +507,79 @@ class RoomPlanImporter:
                 logger.warning(f"Failed to import window: {e}")
                 continue
     
+    def _extract_rotation_from_matrix(self, transform: Dict) -> float:
+        """
+        Extract rotation angle in degrees from RoomPlan transform.
+        
+        Supports two formats:
+        1. New format with explicit rotation field:
+           "rotation": {"yaw_degrees": 90.0, "yaw_radians": 1.5708}
+        2. Old format with transformation matrix (4x4 column-major)
+        
+        Returns rotation in degrees (0-360), where:
+        - 0° = facing right (+X direction)
+        - 90° = facing up (-Z direction in RoomPlan, +Y in our 2D space)
+        - 180° = facing left (-X direction)
+        - 270° = facing down (+Z direction in RoomPlan, -Y in our 2D space)
+        """
+        
+        # First check for explicit rotation field (new format)
+        rotation_data = transform.get('rotation', None)
+        if rotation_data:
+            # Try to get yaw_degrees directly
+            yaw_degrees = rotation_data.get('yaw_degrees', None)
+            if yaw_degrees is not None:
+                # Normalize to 0-360 range
+                angle = yaw_degrees % 360
+                if angle < 0:
+                    angle += 360
+                logger.debug(f"Extracted rotation from yaw_degrees: {angle:.1f}°")
+                return angle
+            
+            # Fallback to yaw_radians if degrees not available
+            yaw_radians = rotation_data.get('yaw_radians', None)
+            if yaw_radians is not None:
+                angle_degrees = math.degrees(yaw_radians)
+                # Normalize to 0-360 range
+                angle = angle_degrees % 360
+                if angle < 0:
+                    angle += 360
+                logger.debug(f"Extracted rotation from yaw_radians: {angle:.1f}°")
+                return angle
+        
+        # Fallback to matrix extraction (old format)
+        matrix = transform.get('matrix', None)
+        
+        if not matrix or len(matrix) < 1 or len(matrix[0]) < 3:
+            return 0.0  # Default to 0° if no rotation data available
+        
+        try:
+            # Extract the X-axis direction vector from the first row
+            # matrix[0][0] = right direction X component
+            # matrix[0][2] = right direction Z component (maps to Y in 2D)
+            right_x = matrix[0][0]
+            right_z = matrix[0][2]
+            
+            # Calculate angle using atan2
+            # atan2(z, x) gives angle from +X axis in the XZ plane
+            # We negate right_z because RoomPlan's +Z points forward (north),
+            # but in our 2D coordinate system +Y points up (north)
+            angle_radians = math.atan2(-right_z, right_x)
+            
+            # Convert to degrees
+            angle_degrees = math.degrees(angle_radians)
+            
+            # Normalize to 0-360 range
+            if angle_degrees < 0:
+                angle_degrees += 360
+            
+            logger.debug(f"Extracted rotation from matrix: {angle_degrees:.1f}°")
+            return angle_degrees
+            
+        except (IndexError, TypeError, ValueError) as e:
+            logger.warning(f"Failed to extract rotation from matrix: {e}")
+            return 0.0
+    
     def _import_objects(self, floor_plan: FloorPlan, objects_data: List[Dict]):
         """Import furniture and fixture objects."""
         
@@ -520,13 +593,16 @@ class RoomPlanImporter:
                 height = dims.get('height', 30) * self.scale_factor
                 depth = dims.get('depth', 24) * self.scale_factor
                 
-                # Get position
+                # Get position and rotation
                 transform = obj_data.get('transform', {})
                 position = transform.get('position', {})
                 pos_x = position.get('x', 0) * self.scale_factor
                 pos_z = position.get('z', 0) * self.scale_factor
                 
                 pos = Point(x=pos_x, y=pos_z)
+                
+                # Extract rotation from transform matrix
+                rotation_degrees = self._extract_rotation_from_matrix(transform)
                 
                 # Check if it's a fixture
                 if category in self.FIXTURE_MAPPING:
@@ -537,12 +613,12 @@ class RoomPlanImporter:
                         width=width,
                         depth=depth,
                         fixture_type=fixture_type,
-                        rotation=0,
+                        rotation=rotation_degrees,
                         name=category.title()
                     )
                     
                     floor_plan.add_fixture(fixture)
-                    logger.debug(f"Added fixture: {category} at ({pos_x:.1f}, {pos_z:.1f})")
+                    logger.debug(f"Added fixture: {category} at ({pos_x:.1f}, {pos_z:.1f}), rotation: {rotation_degrees:.1f}°")
                     
                 # Check if it's furniture
                 elif category in self.FURNITURE_MAPPING:
@@ -553,12 +629,12 @@ class RoomPlanImporter:
                         width=width,
                         depth=depth,
                         furniture_type=furniture_type,
-                        rotation=0,
+                        rotation=rotation_degrees,
                         name=category.title()
                     )
                     
                     floor_plan.add_furniture(furniture)
-                    logger.debug(f"Added furniture: {category} at ({pos_x:.1f}, {pos_z:.1f})")
+                    logger.debug(f"Added furniture: {category} at ({pos_x:.1f}, {pos_z:.1f}), rotation: {rotation_degrees:.1f}°")
                 else:
                     logger.debug(f"Unknown object category: {category}")
                     

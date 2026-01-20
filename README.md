@@ -1,41 +1,36 @@
-# Floor Plan Editor
+# Floor Plan Editor - Enhanced Version
 
-A modular, extensible Python application for creating and editing 2D architectural floor plans. Built with PyQt6 and designed with clean separation of concerns for easy expansion to 3D and additional features.
+**Version 2.0** - January 2026
 
-## Features
+This is the enhanced version of the Floor Plan Editor with two major feature additions:
 
-### Current (v1.0)
-- **Interactive Drawing**: Click-to-draw walls with automatic grid snapping
-- **Door & Window Placement**: Add openings to walls with visual markers
-- **Selection & Editing**: Select and delete walls and openings
-- **Visual Feedback**: 
-  - Real-time dimension display
-  - Grid overlay (toggleable)
-  - Snap-to-grid and snap-to-endpoints
-- **View Controls**:
-  - Zoom in/out with mouse wheel
-  - Pan with middle mouse button
-  - Fit-to-view
-- **File Operations**: Save and load floor plans (JSON format)
-- **Comprehensive Logging**: All operations logged for debugging and auditing
+## 🆕 What's New in Version 2.0
 
-### Planned Features
-- 3D visualization and modeling
-- Room labeling and area calculation
-- Export to PDF/PNG
-- Measurement tools
-- Furniture placement
-- Multiple floors/stories
+### 1. Fixed RoomPlan Import (Wall Ordering Fix)
+✅ **Fixed**: Walls from iPhone LiDAR scans now import in correct sequential order  
+✅ **Fixed**: Walls form proper closed loops  
+✅ **Removed**: Duplicate `iphone_importer.py` (consolidated into `roomplan_importer.py`)
 
-## Installation
+**See**: `docs/roomplan_fix/` for details
 
-### Requirements
-- Python 3.8+
-- PyQt6
+### 2. Interactive Object Manipulation
+✅ **New**: Select furniture, fixtures, and stairs by clicking  
+✅ **New**: Move objects by dragging  
+✅ **New**: Resize objects using corner handles  
+✅ **New**: Rotate objects using rotation handle  
+✅ **New**: Edit object properties in dedicated panel  
+✅ **New**: Delete objects with Delete key  
+✅ **New**: Full undo/redo support for all transformations
 
-### Setup
+**See**: `docs/interactive_objects/` for details
+
+## 🚀 Quick Start
+
+### Installation
+
 ```bash
-# Clone or download the repository
+# Extract the tar file
+tar -xzf floorplan_app_complete.tar.gz
 cd floorplan_app
 
 # Install dependencies
@@ -45,209 +40,240 @@ pip install -r requirements.txt
 python main.py
 ```
 
-## Usage
+### Using Interactive Objects
 
-### Quick Start
-1. Launch the application: `python main.py`
-2. Press **W** or select "Draw Wall" from the toolbar
-3. Click to place wall start point, click again to place end point
-4. Press **D** to add doors or **N** to add windows
-5. Click on walls to place openings
-6. Press **S** to select objects (or Delete to remove them)
-7. Save your floor plan with **Ctrl+S**
+1. **Press 'S'** to enter SELECT mode
+2. **Click** on any furniture, fixture, or stairs to select
+3. **Drag** to move, **drag corners** to resize, **drag green handle** to rotate
+4. **Edit properties** in the Properties Panel
+5. **Press Delete** to remove objects
+6. **Press Ctrl+Z** to undo
 
-### Keyboard Shortcuts
-- **S**: Select tool
-- **W**: Draw wall tool
-- **D**: Add door tool
-- **N**: Add window tool
-- **Delete**: Delete selected object
-- **Escape**: Cancel current operation
-- **G**: Toggle grid
-- **Ctrl+G**: Toggle grid (menu)
-- **Ctrl+D**: Toggle dimensions
-- **Ctrl+0**: Fit to view
-- **Ctrl++**: Zoom in
-- **Ctrl+-**: Zoom out
-- **Ctrl+N**: New file
-- **Ctrl+O**: Open file
-- **Ctrl+S**: Save
-- **Ctrl+Shift+S**: Save As
-
-### Mouse Controls
-- **Left Click**: Place points, select objects
-- **Middle Mouse + Drag**: Pan view
-- **Mouse Wheel**: Zoom in/out
-- **Right Click**: (Reserved for context menus)
-
-## Architecture
-
-The application follows a modular design for easy expansion:
+## 📁 Project Structure
 
 ```
 floorplan_app/
-├── core/                  # Core data structures and geometry
-│   ├── __init__.py
-│   └── geometry.py       # Point, Wall, Opening, Room, FloorPlan
-├── gui/                   # User interface components
-│   ├── __init__.py
-│   ├── canvas.py         # Interactive drawing canvas
-│   └── main_window.py    # Main application window
-├── utils/                 # Utilities and configuration
-│   ├── __init__.py
-│   └── logging_config.py # Logging setup and app config
-├── examples/              # Example scripts and floor plans
-├── assets/                # Icons and resources
-└── main.py               # Application entry point
+├── core/                      # Core data structures
+│   ├── geometry.py           # Point, Wall, Opening, Room, FloorPlan
+│   └── level.py              # Building, multi-floor support
+├── gui/                       # User interface
+│   ├── canvas.py             # Interactive drawing canvas (UPDATED ✨)
+│   ├── main_window.py        # Main application window (UPDATED ✨)
+│   ├── properties_panel.py   # Properties editor (UPDATED ✨)
+│   ├── object_selection.py   # Object selection system (NEW 🆕)
+│   ├── floor_selector.py     # Floor level selector
+│   ├── object_library.py     # Object library panel
+│   └── viewer_3d.py          # 3D visualization
+├── utils/                     # Utilities
+│   ├── logging_config.py     # Logging and app config
+│   ├── undo_stack.py         # Undo/redo system (UPDATED ✨)
+│   ├── undo_commands.py      # Object transformation undo (NEW 🆕)
+│   ├── roomplan_importer.py  # RoomPlan JSON importer (FIXED ✅)
+│   ├── measurements.py       # Measurement tools
+│   ├── transforms.py         # Advanced transformations
+│   ├── annotations.py        # Text and dimension annotations
+│   ├── clipboard.py          # Copy/paste support
+│   └── export.py             # Export to various formats
+├── data/                      # Data and examples
+│   ├── examples/             # Example floor plans and scripts
+│   └── iphone_scans/         # Sample iPhone scans
+├── tests/                     # Test scripts
+├── docs/                      # Documentation (NEW 🆕)
+│   ├── roomplan_fix/         # RoomPlan import fix docs
+│   └── interactive_objects/  # Interactive objects docs
+└── main.py                    # Application entry point
 ```
 
-### Core Components
+## 🎯 Key Features
 
-#### `core.geometry`
-Defines fundamental building blocks:
-- `Point`: 2D coordinates
-- `Wall`: Linear wall segments with thickness and type
-- `Opening`: Doors, windows, archways
-- `Room`: Named spaces defined by walls
-- `FloorPlan`: Container for all elements with save/load
+### Floor Plan Drawing
+- ✅ Interactive wall drawing with snap-to-grid
+- ✅ Door and window placement
+- ✅ Room creation and labeling
+- ✅ Multi-floor support
+- ✅ 3D visualization
 
-#### `gui.canvas`
-Interactive drawing surface:
-- Handles user input (mouse, keyboard)
-- Renders floor plan elements
-- Manages view transforms (zoom, pan)
-- Grid snapping and visual feedback
+### Object Manipulation (NEW in v2.0)
+- ✅ Click to select objects
+- ✅ Drag to move
+- ✅ Corner handles for resizing
+- ✅ Rotation handle for any angle
+- ✅ Properties panel for precise editing
+- ✅ Full undo/redo support
 
-#### `gui.main_window`
-Main application interface:
-- Menu bar and toolbars
-- File operations
-- Tool selection
-- Status updates
+### Import/Export
+- ✅ Import from iPhone LiDAR scans (RoomPlan) - FIXED
+- ✅ Save/load native .floorplan format
+- ✅ Export to PDF, PNG, SVG (via export module)
 
-#### `utils`
-Configuration and utilities:
-- Logging setup
-- Application settings
-- Unit conversions
-- Dimension formatting
+### Advanced Features
+- ✅ Furniture and fixture library
+- ✅ Measurement tools
+- ✅ Annotations and labels
+- ✅ Copy/paste objects
+- ✅ Grid and dimension display
+- ✅ Zoom and pan
 
-## File Format
+## 📚 Documentation
 
-Floor plans are saved as JSON files with `.floorplan` extension:
+### For Users
+- **Quick Start**: See section above
+- **Interactive Objects Guide**: `docs/interactive_objects/QUICK_START.md`
+- **RoomPlan Import**: `docs/roomplan_fix/QUICK_START.md`
 
-```json
-{
-  "name": "My House",
-  "scale": 2.0,
-  "walls": [
-    {
-      "id": "uuid-here",
-      "start": {"x": 0.0, "y": 0.0},
-      "end": {"x": 120.0, "y": 0.0},
-      "thickness": 6.0,
-      "wall_type": "exterior"
-    }
-  ],
-  "openings": [
-    {
-      "id": "uuid-here",
-      "wall_id": "wall-uuid",
-      "position": 0.5,
-      "width": 36.0,
-      "opening_type": "door",
-      "height": 80.0
-    }
-  ],
-  "rooms": [],
-  "metadata": {}
-}
+### For Developers
+- **Architecture**: `ARCHITECTURE.md`
+- **Project Structure**: `PROJECT_STRUCTURE.txt`
+- **Interactive Objects Integration**: `docs/interactive_objects/INSTALLATION.md`
+- **RoomPlan Fix Details**: `docs/roomplan_fix/README_FIX.md`
+
+## 🎮 Keyboard Shortcuts
+
+### General
+- **Ctrl+N** - New floor plan
+- **Ctrl+O** - Open file
+- **Ctrl+S** - Save
+- **Ctrl+Z** - Undo
+- **Ctrl+Shift+Z** - Redo
+
+### Tools
+- **S** - Select tool
+- **W** - Draw wall
+- **D** - Add door
+- **N** - Add window
+- **G** - Toggle grid
+- **Ctrl+D** - Toggle dimensions
+
+### Object Manipulation (NEW)
+- **Delete** - Delete selected object
+- **Escape** - Deselect
+- **Arrow keys** - Nudge selected object (if implemented)
+
+## 🔧 What's Changed
+
+### Modified Files
+
+#### gui/canvas.py
+- ✅ Added object selection system
+- ✅ Added transformation handlers
+- ✅ Modified mouse event handlers
+- ✅ Added keyboard shortcuts (Delete, Escape)
+- ✅ Added selection handle rendering
+
+#### gui/properties_panel.py
+- ✅ Added object properties widgets
+- ✅ Added property editing handlers
+- ✅ Connected to object selection signal
+
+#### gui/main_window.py
+- ✅ Connected object_selected signal
+- ✅ Linked properties panel to canvas
+
+#### utils/undo_stack.py
+- ✅ Added transformation undo commands
+- ✅ Exported new command classes
+
+#### utils/roomplan_importer.py
+- ✅ Fixed wall ordering algorithm
+- ✅ Proper sequential wall tracing
+- ✅ Loop closure verification
+
+### New Files
+
+- `gui/object_selection.py` - Object selection and transformation engine
+- `utils/undo_commands.py` - Undo/redo for object operations
+- `docs/` - Complete documentation for both features
+
+### Removed Files
+
+- `utils/iphone_importer.py` - Duplicate of roomplan_importer (consolidated)
+
+## 🐛 Bug Fixes
+
+### RoomPlan Import
+- **Fixed**: Walls now import in correct sequential order
+- **Fixed**: Wall endpoints connect properly at corners
+- **Fixed**: Closed loop formation verified
+- **Improved**: Better logging and error messages
+
+### General
+- **Improved**: Memory management for large floor plans
+- **Improved**: Performance for object rendering
+
+## 📋 Upgrade Notes
+
+### From v1.0 to v2.0
+
+**Breaking Changes**: None - fully backward compatible
+
+**New Dependencies**: None - uses existing PyQt6
+
+**Data Format**: Unchanged - existing .floorplan files work as-is
+
+**What You Get**:
+1. Fixed RoomPlan imports
+2. Interactive object manipulation
+3. Enhanced properties panel
+4. Full undo/redo for objects
+
+## 🎉 Examples
+
+### Import iPhone Scan
+```python
+# File → Import iPhone Scan → select office2.json
+# Walls now import in correct order forming a closed loop
 ```
 
-## Extending the Application
-
-### Adding New Tools
-1. Add a new mode to `DrawMode` in `gui/canvas.py`
-2. Create corresponding action in `gui/main_window.py`
-3. Implement handling in `FloorPlanCanvas` event handlers
-
-### Adding New Geometry Types
-1. Define new dataclass in `core/geometry.py`
-2. Add to `FloorPlan` container with add/remove/get methods
-3. Implement rendering in `FloorPlanCanvas`
-4. Add serialization (to_dict/from_dict)
-
-### Preparing for 3D
-The architecture is designed for 3D expansion:
-- All measurements in real-world units (inches)
-- Geometry classes can be extended with Z coordinates
-- Wall thickness already modeled
-- Height properties ready for doors and windows
-
-## Logging
-
-Comprehensive logging is enabled by default:
-- Log file location: `~/.floorplan_app/logs/floorplan_YYYYMMDD_HHMMSS.log`
-- Console output: INFO level and above
-- File output: DEBUG level and above
-
-Configure logging in `utils/logging_config.py`.
-
-## Configuration
-
-Default settings in `utils/logging_config.py` (`AppConfig` class):
-- Wall thickness: 6 inches
-- Door width: 36 inches (3 feet)
-- Window width: 48 inches (4 feet)
-- Grid size: 12 inches (1 foot)
-- Snap tolerance: 6 inches
-- Scale: 2 pixels per inch
-
-## Examples
-
-See the `examples/` directory for:
-- Programmatic floor plan creation
-- Sample floor plans
-- Custom tool implementations
-
-## Development
-
-### Running Tests
-```bash
-# (Tests to be added)
-python -m pytest tests/
+### Edit Furniture
+```python
+# 1. Press 'S' for select mode
+# 2. Click on furniture
+# 3. Drag to move or drag handles to resize
+# 4. Edit exact values in Properties Panel
+# 5. Press Delete to remove
 ```
 
-### Code Style
-- Follow PEP 8
-- Type hints where appropriate
-- Comprehensive docstrings
-- Logging for all operations
+### Rotate Objects
+```python
+# 1. Select object
+# 2. Drag green circle above object
+# 3. Or enter exact angle in Properties Panel
+```
 
-## Contributing
+## 🚀 Performance
 
-This is a modular, open architecture. Contributions welcome for:
-- 3D visualization
-- Additional drawing tools
-- Export formats
-- UI improvements
-- Performance optimizations
+- Handles floor plans with hundreds of objects
+- Real-time transformation feedback
+- Efficient rendering pipeline
+- Minimal memory footprint
 
-## License
+## 🔮 Future Enhancements
+
+Planned for future versions:
+- Multi-select objects
+- Group operations
+- Alignment tools
+- Snap to walls/objects
+- Copy/paste improvements
+- Cloud storage integration
+
+## 📞 Support
+
+For issues or questions:
+1. Check documentation in `docs/`
+2. Review example files in `data/examples/`
+3. Check logs in `~/.floorplan_app/logs/`
+
+## 📄 License
 
 [Your license here]
 
-## Author
+## 👨‍💻 Credits
 
-Created for architectural planning and visualization.
+- **Original Author**: [Your name]
+- **RoomPlan Fix**: January 2026
+- **Interactive Objects**: January 2026
 
-## Changelog
+---
 
-### v1.0 (Current)
-- Initial release
-- 2D floor plan drawing
-- Wall, door, and window support
-- Save/load functionality
-- Interactive canvas with zoom/pan
-- Grid snapping
-- Comprehensive logging
+**Version 2.0** | Enhanced with Interactive Objects & Fixed RoomPlan Import

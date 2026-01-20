@@ -1,0 +1,63 @@
+================================================================================
+PROJECT STRUCTURE: floorplan_app
+Generated: 2026-01-19 22:38:38
+================================================================================
+
+floorplan_app/
+├── assets/
+├── core/
+│   ├── __init__.py
+│   ├── geometry.py
+│   └── level.py
+├── data/
+│   ├── examples/
+│   │   ├── comprehensive_house.floorplan
+│   │   ├── create_comprehensive_house.py
+│   │   ├── create_example_plans.py
+│   │   ├── demonstrate_new_features.py
+│   │   ├── house_with_features.floorplan
+│   │   ├── l_shaped_house.floorplan
+│   │   └── simple_house.floorplan
+│   └── iphone_scans/
+│       └── office2.json
+├── gui/
+│   ├── __init__.py
+│   ├── canvas.py
+│   ├── floor_selector.py
+│   ├── main_window.py
+│   ├── object_library.py
+│   ├── properties_panel.py
+│   └── viewer_3d.py
+├── iOS scan App/
+│   ├── ContentView.swift
+│   ├── FloorPlanPreview.swift
+│   ├── Info.plist
+│   ├── MappingFloorPlanView.swift
+│   ├── Models.swift
+│   ├── README.md
+│   ├── RoomScannerApp.swift
+│   ├── ScanManager.swift
+│   └── ScanningView.swift
+├── tests/
+│   ├── analyze_corners.py
+│   ├── test_file_load.py
+│   ├── test_installation.py
+│   ├── test_references.py
+│   ├── test_roomplan_import.py
+│   └── visualize_wall_order.py
+├── utils/
+│   ├── __init__.py
+│   ├── annotations.py
+│   ├── clipboard.py
+│   ├── export.py
+│   ├── iphone_importer.py
+│   ├── logging_config.py
+│   ├── measurements.py
+│   ├── roomplan_importer.py
+│   ├── transforms.py
+│   └── undo_stack.py
+├── ARCHITECTURE.md
+├── README.md
+├── combine_project.py
+├── main.py
+└── requirements.txt

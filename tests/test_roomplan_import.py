@@ -95,3 +95,4 @@ def test_roomplan_import():
 if __name__ == "__main__":
     success = test_roomplan_import()
     sys.exit(0 if success else 1)
+

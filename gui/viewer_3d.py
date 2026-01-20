@@ -637,3 +637,4 @@ class Viewer3DCanvas(QWidget):
         # Limit zoom
         self.zoom = max(0.1, min(5.0, self.zoom))
         self.update()
+

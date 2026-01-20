@@ -148,3 +148,4 @@ def inches_to_feet(inches: float) -> float:
 def feet_to_inches(feet: float) -> float:
     """Convert feet to inches."""
     return feet * 12.0
+

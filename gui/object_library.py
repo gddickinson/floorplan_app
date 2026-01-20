@@ -282,3 +282,4 @@ class ObjectLibrary(QWidget):
         
         self.object_selected.emit(object_type, object_data)
         logger.info(f"Selected {object_type}: {item_type.value}")
+

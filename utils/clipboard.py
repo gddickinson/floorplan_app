@@ -178,3 +178,4 @@ _clipboard = Clipboard()
 def get_clipboard() -> Clipboard:
     """Get the global clipboard instance."""
     return _clipboard
+

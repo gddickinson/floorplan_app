@@ -165,3 +165,4 @@ if __name__ == "__main__":
         sys.exit(1)
     
     analyze_wall_order(sys.argv[1])
+
