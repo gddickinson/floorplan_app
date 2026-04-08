@@ -86,7 +86,7 @@ if __name__ == '__main__':
         filepath = sys.argv[1]
     else:
         # Default to office2.json if available
-        filepath = '/Users/george/Documents/python_projects/floorplan_app/data/iphone_scans/office2.json'
+        filepath = str(Path(__file__).parent.parent.parent / 'data' / 'iphone_scans' / 'office2.json')
     
     try:
         analyze_roomplan_file(filepath)
