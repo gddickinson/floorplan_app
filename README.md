@@ -166,3 +166,7 @@ This creates a demo floor plan, launches the GUI, and captures images to `docs/i
 ## License
 
 MIT License. See [LICENSE](LICENSE) for details.
+
+
+---
+*Built with AI assistance from [Claude (Anthropic)](https://claude.com/).*
