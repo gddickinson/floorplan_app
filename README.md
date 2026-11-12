@@ -24,7 +24,7 @@ An interactive 2D architectural floor plan editor built with Python and PyQt6. C
 ### Import/Export
 - Import from iPhone LiDAR scans (Apple RoomPlan JSON format)
 - Save/load native `.floorplan` format (JSON-based)
-- Export to PNG and PDF with title blocks and scale notation
+- PNG/PDF exporter with title block (`utils/export.py`, `FloorPlanExporter`); not yet on the desktop menus
 
 ### Object Library
 - 18 furniture types: beds, sofas, tables, desks, chairs, bookshelves
@@ -60,6 +60,33 @@ python main.py data/examples/comprehensive_house.floorplan
 3. Press **S** to switch to Select mode for editing objects
 4. Use the Object Library panel to place furniture and fixtures
 5. Save your work with **Ctrl+S**
+
+## Web version (runs in the browser)
+
+**Live: https://gddickinson.github.io/floorplan_app/** — the static site *is* the editor: draw walls with the
+desktop snapping (wall ends within 6", then the 1 ft grid), add doors/windows/archways, click a room's walls in any
+order to get its outline, area and perimeter, furnish it from the Object Library, and orbit the result in a WebGL 3D
+view. Save/Open use the desktop `.floorplan` format, so files move between the two apps; export SVG or PNG.
+
+![Web editor: 2D plan, 3D preview and statistics](docs/img/editor.png)
+
+| Home | Examples |
+|---|---|
+| ![Home page](docs/img/home.png) | ![Example plans](docs/img/examples.png) |
+
+The model and geometry (`core/geometry.py` file format, `core/snapping.py`, `core/room_geometry.py`,
+`core/plan_stats.py`, `core/units.py`) are ported to JavaScript in `web/static/` and checked against the Python by
+`node web/static/geometry.test.mjs` on `tests/fixtures/geometry_fixture.json` (written by
+`scripts/make_geometry_fixture.py`).
+
+### Run the web app
+
+```bash
+pip install -r requirements-web.txt
+python run_web.py                      # http://127.0.0.1:8217 (adds "Check vs Python" via POST /api/analyze)
+python -m pytest -q tests/test_web.py  # API, static build, JS tests, web <-> desktop file round trip
+python scripts/build_static.py         # static site in site/ (published by .github/workflows/pages.yml)
+```
 
 ## Screenshots
 
@@ -127,6 +154,7 @@ floorplan_app/
 │   └── iphone_scans/           # Sample iPhone LiDAR scan JSON files
 ├── scripts/
 │   └── generate_screenshots.py # Generate documentation screenshots
+├── web/                        # Browser editor: FastAPI app + ES-module front end (static/)
 ├── tests/                      # Test and debug scripts
 ├── docs/                       # Documentation and images
 ├── RoomScanner/                # iOS companion app (SwiftUI/RoomPlan)

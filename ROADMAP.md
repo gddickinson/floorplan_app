@@ -5,7 +5,7 @@ A mature PyQt6 desktop application with clean three-layer architecture: `core/` 
 
 ## Short-term Improvements
 - [x] Expand test coverage -- added pytest unit tests for `core/geometry.py` (Point, Wall, Opening, FloorPlan, Building) with 24 test cases
-- [ ] Add integration tests for save/load round-trips (`.floorplan` JSON format)
+- [x] Add integration tests for save/load round-trips (`.floorplan` JSON format) -- web <-> desktop round trip in tests/test_web.py
 - [ ] Add CI configuration (GitHub Actions) to run tests and linting on each push
 - [ ] Add type checking with mypy -- the core layer should be fully typed
 - [x] Move `tests/analyze_corners.py`, `tests/visualize_wall_order.py`, and `tests/debug_rotation.py` to `scripts/debug/` directory -- they are not tests
@@ -13,13 +13,13 @@ A mature PyQt6 desktop application with clean three-layer architecture: `core/` 
 ## Feature Enhancements
 - [ ] Implement DXF/DWG import/export for CAD interoperability
 - [ ] Add dimension auto-calculation and display for walls (length annotations)
-- [ ] Implement room area auto-calculation displayed inside room labels
+- [ ] Implement room area auto-calculation displayed inside room labels (done in the web editor; desktop canvas still shows names only)
 - [ ] Add a material/finish library (flooring, wall colors, textures)
 - [ ] Improve `gui/viewer_3d.py` -- add textured walls, lighting, and walkthrough mode
 - [ ] Add collaborative editing via file-based sync or real-time protocol
 
 ## Long-term Vision
-- [ ] Implement a web-based version (Three.js frontend) sharing `core/` data models
+- [x] Implement a web-based version sharing `core/` data models -- web/ (raw WebGL, no Three.js), GitHub Pages workflow
 - [ ] Add AR mode -- overlay floor plan on camera feed using ARKit/ARCore
 - [ ] Integrate with smart home APIs (HomeKit, SmartThings) for device placement
 - [ ] Add energy modeling (window/wall insulation, HVAC layout suggestions)
