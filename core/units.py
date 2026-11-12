@@ -16,13 +16,18 @@ def format_dimension(inches: float, unit: str = "ft") -> str:
     """
     if unit == "in":
         return f'{inches:.1f}"'
-    elif unit == "ft" or (unit == "auto" and inches >= 12):
-        feet = int(inches // 12)
-        remaining_inches = inches % 12
+    elif unit == "ft" or (unit == "auto" and abs(inches) >= 12):
+        sign = "-" if inches < 0 else ""
+        size = abs(inches)
+        feet = int(size // 12)
+        remaining_inches = size % 12
+        if remaining_inches >= 11.95:  # would print as 12.0": carry into the feet
+            feet += 1
+            remaining_inches = 0.0
         if remaining_inches < 0.1:
-            return f"{feet}'"
+            return f"{sign if feet else ''}{feet}'"
         else:
-            return f"{feet}' {remaining_inches:.1f}\""
+            return f"{sign}{feet}' {remaining_inches:.1f}\""
     else:
         return f'{inches:.1f}"'
 
