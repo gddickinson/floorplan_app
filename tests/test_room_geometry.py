@@ -55,3 +55,17 @@ def test_t_junction_wall_longer_than_room():
         plan.add_wall(w)
     room = Room("R", wall_ids=["long", "b", "c", "a"])
     assert calculate_room_area(room, plan) == pytest.approx(12 * 8)
+
+
+def test_shared_wall_running_past_both_corners():
+    """Two rooms on one long wall; for the lower room the long wall overshoots at both of its corners."""
+    plan = FloorPlan()
+    for w in [Wall(Point(300, 300), Point(300, 540), id="long"), Wall(Point(300, 300), Point(420, 300), id="a1"),
+              Wall(Point(420, 300), Point(420, 400), id="a2"), Wall(Point(420, 400), Point(300, 400), id="mid"),
+              Wall(Point(420, 400), Point(420, 500), id="b2"), Wall(Point(300, 500), Point(420, 500), id="b3")]:
+        plan.add_wall(w)
+    upper = Room("U", wall_ids=["long", "mid", "a2", "a1"])
+    lower = Room("L", wall_ids=["b3", "long", "mid", "b2"])
+    starts_on_long = Room("L2", wall_ids=["long", "b3", "b2", "mid"])
+    for room in (upper, lower, starts_on_long):
+        assert calculate_room_area(room, plan) == pytest.approx(120 * 100 / 144)

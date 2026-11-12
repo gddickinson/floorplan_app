@@ -51,6 +51,45 @@ def _legacy_polygon(walls: Sequence[Wall]) -> List[Point]:
     return pts
 
 
+def _segment_intersection(w1: Wall, w2: Wall) -> Optional[Point]:
+    """Crossing point of two wall segments (centre lines), or None."""
+    p = line_intersection(w1, w2)
+    if p is None:
+        return None
+    if point_segment_distance(p, w1.start, w1.end) > 1e-6 or point_segment_distance(p, w2.start, w2.end) > 1e-6:
+        return None
+    return p
+
+
+def _contacts(wall: Wall, others: Sequence[Wall], tol: float) -> List[Point]:
+    """Points where any of `others` touches `wall` (endpoint on the other wall, or a crossing)."""
+    pts = []
+    for o in others:
+        for e in (o.start, o.end):
+            if point_segment_distance(e, wall.start, wall.end) <= tol:
+                pts.append(e)
+        for e in (wall.start, wall.end):
+            if point_segment_distance(e, o.start, o.end) <= tol:
+                pts.append(e)
+        x = _segment_intersection(wall, o)
+        if x is not None:
+            pts.append(x)
+    return pts
+
+
+def _next_tip(wall: Wall, junction: Point, targets: Sequence[Wall], tol: float) -> Point:
+    """Where the outline leaves `wall` after entering it at `junction`: the nearest other contact with a
+    remaining room wall, or the far endpoint if nothing else touches it."""
+    best, best_d = None, 0.0
+    for p in _contacts(wall, targets, tol):
+        d = p.distance_to(junction)
+        if d > tol and (best is None or d < best_d):
+            best, best_d = p, d
+    if best is not None:
+        return best
+    return wall.start if wall.start.distance_to(junction) >= wall.end.distance_to(junction) else wall.end
+
+
 def _chain(walls: List[Wall], tol: float) -> Optional[List[Tuple[Wall, Point]]]:
     """Order walls into a closed loop. Returns [(wall, junction point with the next wall)] or None."""
     def touches(p, w):
@@ -59,7 +98,8 @@ def _chain(walls: List[Wall], tol: float) -> Optional[List[Tuple[Wall, Point]]]:
     first = walls[0]
     rest = walls[1:]
     # Walk away from the end of the first wall that touches another wall.
-    tip = first.end if any(touches(first.end, w) for w in rest) else first.start
+    start = first.start if any(touches(first.end, w) for w in rest) else first.end
+    tip = _next_tip(first, start, rest, tol)
     order: List[Tuple[Wall, Point]] = []
     current = first
     remaining = list(rest)
@@ -70,18 +110,8 @@ def _chain(walls: List[Wall], tol: float) -> Optional[List[Tuple[Wall, Point]]]:
         nxt = min(cands, key=lambda w: min(tip.distance_to(w.start), tip.distance_to(w.end)))
         order.append((current, tip))
         remaining.remove(nxt)
-        if tip.distance_to(nxt.start) <= tol:
-            new_tip = nxt.end
-        elif tip.distance_to(nxt.end) <= tol:
-            new_tip = nxt.start
-        else:  # T-junction: continue towards the end that leads on to the next wall (or back to the first)
-            targets = remaining or [first]
-
-            def gap(p):
-                return min(point_segment_distance(p, w.start, w.end) for w in targets)
-            new_tip = min((nxt.start, nxt.end), key=lambda p: (round(gap(p), 6), -p.distance_to(tip)))
-        current, tip = nxt, new_tip
-    if not touches(tip, first) and point_segment_distance(first.start, current.start, current.end) > tol:
+        current, tip = nxt, _next_tip(nxt, tip, remaining or [first], tol)
+    if not touches(tip, first):
         return None
     order.append((current, tip))
     return order
