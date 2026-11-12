@@ -166,6 +166,16 @@ class OpeningType(Enum):
     WINDOW_PICTURE = "window_picture"
     WINDOW_SKYLIGHT = "window_skylight"
 
+    @property
+    def is_door(self) -> bool:
+        """True for the generic door and every specific door type."""
+        return self.value == "door" or self.value.startswith("door_")
+
+    @property
+    def is_window(self) -> bool:
+        """True for the generic window and every specific window type."""
+        return self.value == "window" or self.value.startswith("window_")
+
 
 @dataclass
 class Opening:

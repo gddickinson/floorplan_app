@@ -776,8 +776,8 @@ class MainWindow(QMainWindow):
                 
                 logger.info(f"Import successful: {loaded_floor_plan.name}")
                 logger.info(f"  Walls: {len(loaded_floor_plan.walls)}, "
-                          f"Doors: {len([o for o in loaded_floor_plan.openings if 'DOOR' in o.opening_type.value])}, "
-                          f"Windows: {len([o for o in loaded_floor_plan.openings if 'WINDOW' in o.opening_type.value])}")
+                          f"Doors: {len([o for o in loaded_floor_plan.openings if o.opening_type.is_door])}, "
+                          f"Windows: {len([o for o in loaded_floor_plan.openings if o.opening_type.is_window])}")
                 logger.info(f"  Furniture: {len(loaded_floor_plan.furniture)}, "
                           f"Fixtures: {len(loaded_floor_plan.fixtures)}")
                 

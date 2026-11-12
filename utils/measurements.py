@@ -232,8 +232,8 @@ def get_floor_plan_statistics(floor_plan: FloorPlan) -> dict:
         },
         'openings': {
             'count': len(floor_plan.openings),
-            'doors': sum(1 for o in floor_plan.openings if o.opening_type.value == 'door'),
-            'windows': sum(1 for o in floor_plan.openings if o.opening_type.value == 'window'),
+            'doors': sum(1 for o in floor_plan.openings if o.opening_type.is_door),
+            'windows': sum(1 for o in floor_plan.openings if o.opening_type.is_window),
             'archways': sum(1 for o in floor_plan.openings if o.opening_type.value == 'archway'),
         },
         'rooms': {

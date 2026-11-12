@@ -37,8 +37,8 @@ def test_roomplan_import():
         
         print(f"\n3. Imported elements:")
         print(f"   Walls: {len(floor_plan.walls)}")
-        print(f"   Doors: {len([o for o in floor_plan.openings if 'DOOR' in o.opening_type.value])}")
-        print(f"   Windows: {len([o for o in floor_plan.openings if 'WINDOW' in o.opening_type.value])}")
+        print(f"   Doors: {len([o for o in floor_plan.openings if o.opening_type.is_door])}")
+        print(f"   Windows: {len([o for o in floor_plan.openings if o.opening_type.is_window])}")
         print(f"   Furniture: {len(floor_plan.furniture)}")
         print(f"   Fixtures: {len(floor_plan.fixtures)}")
         

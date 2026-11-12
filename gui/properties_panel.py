@@ -263,7 +263,7 @@ class PropertiesPanel(QWidget):
         props_layout.addRow("Position:", pos_spin)
         
         # Sill height (for windows)
-        if opening.opening_type == OpeningType.WINDOW:
+        if opening.opening_type.is_window:
             sill_spin = QDoubleSpinBox()
             sill_spin.setRange(0.0, 96.0)
             sill_spin.setValue(opening.sill_height)

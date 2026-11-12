@@ -124,7 +124,7 @@ class CanvasDrawingMixin:
             wall.start.y + dy * opening.position,
         )
 
-        if opening.opening_type == OpeningType.DOOR:
+        if opening.opening_type.is_door:
             color = AppConfig.DOOR_COLOR
         else:
             color = AppConfig.WINDOW_COLOR
@@ -141,7 +141,9 @@ class CanvasDrawingMixin:
 
         font = QFont("Arial", 8)
         painter.setFont(font)
-        label = "D" if opening.opening_type == OpeningType.DOOR else "W"
+        label = "D" if opening.opening_type.is_door else (
+            "W" if opening.opening_type.is_window else "A"
+        )
         painter.drawText(center_screen.toPoint(), label)
 
     # ── temp / hover ────────────────────────────────────────────────
