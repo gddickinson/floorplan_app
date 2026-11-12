@@ -24,6 +24,7 @@ from core import (
     Point, Wall, Opening, OpeningType, Room, FloorPlan,
     Furniture, FurnitureType, Fixture, FixtureType, Stair, StairType
 )
+from core.snapping import snap_to_grid, find_snap_point
 from utils import AppConfig, format_dimension
 from utils.measurements import MeasurementTool
 from .object_selection import (
@@ -147,19 +148,13 @@ class FloorPlanCanvas(CanvasDrawingMixin, CanvasEventsMixin, QWidget):
 
     def snap_to_grid(self, point: Point) -> Point:
         """Snap a point to the nearest grid intersection."""
-        grid_size = AppConfig.GRID_SIZE
-        snapped_x = round(point.x / grid_size) * grid_size
-        snapped_y = round(point.y / grid_size) * grid_size
-        return Point(snapped_x, snapped_y)
+        return snap_to_grid(point, AppConfig.GRID_SIZE)
 
     def find_snap_point(self, point: Point) -> Point:
         """Find the best snap point (wall endpoints > grid)."""
-        tolerance = AppConfig.SNAP_TOLERANCE
-        for wall in self.floor_plan.walls:
-            for endpoint in [wall.start, wall.end]:
-                if point.distance_to(endpoint) < tolerance:
-                    return endpoint
-        return self.snap_to_grid(point)
+        return find_snap_point(
+            point, self.floor_plan.walls, AppConfig.GRID_SIZE, AppConfig.SNAP_TOLERANCE
+        )
 
     # ── View controls ───────────────────────────────────────────────
 

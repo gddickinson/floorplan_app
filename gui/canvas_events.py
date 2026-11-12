@@ -15,6 +15,7 @@ from core import (
     Furniture, FurnitureType, Fixture, FixtureType, Stair, StairType,
 )
 from core.room_geometry import room_polygon, point_in_polygon
+from core.snapping import point_near_line, opening_position
 from utils import AppConfig, format_dimension
 from .object_selection import SelectableObject, TransformMode
 from utils.undo_commands import ObjectState, TransformObjectCommand, RemoveObjectCommand
@@ -110,14 +111,7 @@ class CanvasEventsMixin:
 
         for wall in self.floor_plan.walls:
             if self._point_near_line(point, wall.start, wall.end, tolerance):
-                wall_length = wall.length()
-                dx = wall.end.x - wall.start.x
-                dy = wall.end.y - wall.start.y
-                t = (
-                    (point.x - wall.start.x) * dx
-                    + (point.y - wall.start.y) * dy
-                ) / (wall_length ** 2)
-                t = max(0.1, min(0.9, t))
+                t = opening_position(wall, point)
 
                 opening_type = (
                     OpeningType.DOOR
@@ -253,20 +247,7 @@ class CanvasEventsMixin:
     def _point_near_line(self, point: Point, line_start: Point,
                          line_end: Point, tolerance: float) -> bool:
         """Check if a point is near a line segment."""
-        dx = line_end.x - line_start.x
-        dy = line_end.y - line_start.y
-        line_length = (dx ** 2 + dy ** 2) ** 0.5
-
-        if line_length < 0.1:
-            return point.distance_to(line_start) < tolerance
-
-        t = (
-            (point.x - line_start.x) * dx + (point.y - line_start.y) * dy
-        ) / (line_length ** 2)
-        t = max(0, min(1, t))
-
-        nearest = Point(line_start.x + t * dx, line_start.y + t * dy)
-        return point.distance_to(nearest) < tolerance
+        return point_near_line(point, line_start, line_end, tolerance)
 
     # ── object selection / transform ────────────────────────────────
     def refresh_selectable_objects(self):
