@@ -73,11 +73,24 @@ function itemFromDict(d, kind) {
 }
 export const furnitureFromDict = d => itemFromDict(d, 'furniture_type');
 export const fixtureFromDict = d => itemFromDict(d, 'fixture_type');
-export const stairFromDict = d => ({
-  id: id(d), start: pt(need(d, 'start', 'stair'), 'stair start'), end: pt(need(d, 'end', 'stair'), 'stair end'),
-  width: num(need(d, 'width', 'stair'), 'stair width'), stair_type: enumv('stair_type', get(d, 'stair_type', 'straight')),
-  num_steps: num(get(d, 'num_steps', 12), 'num_steps'), rotation: num(get(d, 'rotation', 0.0), 'stair rotation'),
-});
+// core.geometry.stair_rotation: the run start -> end is a stair's orientation (0 = running down, +y);
+// a zero-length stair keeps the stored value.
+export function stairRotation(start, end, fallback = 0.0) {
+  const dx = end.x - start.x, dy = end.y - start.y;
+  if (dx * dx + dy * dy < 1e-18) return fallback;
+  let deg = Math.atan2(dy, dx) * (180.0 / Math.PI) - 90.0;
+  if (deg < 0) deg += 360.0;
+  if (deg >= 360.0) deg -= 360.0;
+  return deg;
+}
+const pyMod360 = v => { const r = v % 360; return r < 0 ? r + 360 : r; };
+export function stairFromDict(d) {
+  const s = { id: id(d), start: pt(need(d, 'start', 'stair'), 'stair start'), end: pt(need(d, 'end', 'stair'), 'stair end'),
+    width: num(need(d, 'width', 'stair'), 'stair width'), stair_type: enumv('stair_type', get(d, 'stair_type', 'straight')),
+    num_steps: num(get(d, 'num_steps', 12), 'num_steps'), rotation: 0 };
+  s.rotation = stairRotation(s.start, s.end, pyMod360(num(get(d, 'rotation', 0.0), 'stair rotation')));
+  return s;
+}
 
 export function fromDict(d) {
   if (d == null || typeof d !== 'object' || Array.isArray(d)) throw new Error('not a floor plan (expected a JSON object)');
@@ -107,7 +120,7 @@ export function toDict(p) {
     rooms: p.rooms.map(r => ({ id: r.id, name: r.name, wall_ids: [...r.wall_ids], color: r.color })),
     furniture: p.furniture.map(f => item(f, 'furniture_type')),
     stairs: p.stairs.map(s => ({ id: s.id, start: P(s.start), end: P(s.end), width: s.width, stair_type: s.stair_type,
-      num_steps: s.num_steps, rotation: s.rotation })),
+      num_steps: s.num_steps, rotation: stairRotation(s.start, s.end, s.rotation) })),
     fixtures: p.fixtures.map(f => item(f, 'fixture_type')),
     metadata: p.metadata,
   };

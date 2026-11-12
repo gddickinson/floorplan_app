@@ -2680,7 +2680,68 @@
      }
     ],
     "furniture": [],
-    "stairs": [],
+    "stairs": [
+     {
+      "id": "st0",
+      "start": {
+       "x": 0,
+       "y": 300
+      },
+      "end": {
+       "x": 120,
+       "y": 300
+      },
+      "width": 36.0,
+      "stair_type": "straight",
+      "num_steps": 14,
+      "rotation": 270.0
+     },
+     {
+      "id": "st1",
+      "start": {
+       "x": 150,
+       "y": 300
+      },
+      "end": {
+       "x": 230,
+       "y": 380
+      },
+      "width": 36.0,
+      "stair_type": "straight",
+      "num_steps": 14,
+      "rotation": 315.0
+     },
+     {
+      "id": "st2",
+      "start": {
+       "x": 200,
+       "y": 250
+      },
+      "end": {
+       "x": 200,
+       "y": 140
+      },
+      "width": 36.0,
+      "stair_type": "straight",
+      "num_steps": 14,
+      "rotation": 180.0
+     },
+     {
+      "id": "st3",
+      "start": {
+       "x": 260,
+       "y": 260
+      },
+      "end": {
+       "x": 260,
+       "y": 260
+      },
+      "width": 36.0,
+      "stair_type": "straight",
+      "num_steps": 14,
+      "rotation": 30.0
+     }
+    ],
     "fixtures": [],
     "metadata": {
      "source": "make_geometry_fixture"

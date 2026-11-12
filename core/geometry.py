@@ -12,6 +12,7 @@ This module defines the fundamental building blocks for creating floor plans:
 
 import json
 import logging
+import math
 from dataclasses import dataclass, field
 from typing import List, Tuple, Optional, Dict, Any
 from enum import Enum
@@ -331,22 +332,71 @@ class StairType(Enum):
     CURVED = "curved"
 
 
-@dataclass
+def stair_rotation(start: Point, end: Point, fallback: float = 0.0) -> float:
+    """Rotation (degrees, 0-360) of a stair whose run goes from start to end: 0 = running down the screen
+    (+y), as for furniture rotated about its centre. A zero-length stair keeps `fallback`."""
+    dx, dy = end.x - start.x, end.y - start.y
+    if dx * dx + dy * dy < 1e-18:
+        return fallback
+    deg = math.atan2(dy, dx) * (180.0 / math.pi) - 90.0
+    if deg < 0:
+        deg += 360.0
+    if deg >= 360.0:
+        deg -= 360.0
+    return deg
+
+
+@dataclass(init=False)
 class Stair:
-    """Represents a staircase in the floor plan."""
+    """Represents a staircase in the floor plan.
+
+    The run from `start` to `end` is the stair's only orientation: `rotation` is derived from it (see
+    stair_rotation) and setting `rotation` turns the run about its centre, so drawing, selection and the saved
+    file always agree. A `rotation` passed in (e.g. from an older file) is used only for a zero-length stair.
+    """
     start: Point
     end: Point
     width: float  # inches
     stair_type: StairType = StairType.STRAIGHT
     num_steps: int = 12
-    rotation: float = 0.0  # degrees
     id: Optional[str] = None
-    
-    def __post_init__(self):
+
+    def __init__(self, start: Point, end: Point, width: float,
+                 stair_type: StairType = StairType.STRAIGHT, num_steps: int = 12,
+                 rotation: float = 0.0, id: Optional[str] = None):
+        self.start = start
+        self.end = end
+        self.width = width
+        self.stair_type = stair_type
+        self.num_steps = num_steps
+        self._fallback_rotation = rotation % 360.0
+        self.id = id
         if self.id is None:
             import uuid
             self.id = str(uuid.uuid4())
-    
+
+    @property
+    def rotation(self) -> float:
+        """Degrees, derived from the run start -> end."""
+        return stair_rotation(self.start, self.end, self._fallback_rotation)
+
+    @rotation.setter
+    def rotation(self, value: float):
+        """Turn the run about its centre so that `rotation` becomes `value`."""
+        value = value % 360.0
+        delta = math.radians(value - self.rotation)
+        self._fallback_rotation = value
+        if abs(delta) < 1e-12 or self.length() < 1e-9:
+            return
+        cx = (self.start.x + self.end.x) / 2
+        cy = (self.start.y + self.end.y) / 2
+        c, s = math.cos(delta), math.sin(delta)
+
+        def turn(p: Point) -> Point:
+            dx, dy = p.x - cx, p.y - cy
+            return Point(cx + dx * c - dy * s, cy + dx * s + dy * c)
+        self.start, self.end = turn(self.start), turn(self.end)
+
     def length(self) -> float:
         """Calculate stair length in inches."""
         return self.start.distance_to(self.end)

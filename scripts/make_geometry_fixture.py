@@ -15,7 +15,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from core import FloorPlan, Opening, OpeningType, Point, Room, Wall, WallType  # noqa: E402
+from core import FloorPlan, Opening, OpeningType, Point, Room, Stair, StairType, Wall, WallType  # noqa: E402
 from core.plan_stats import calculate_perimeter, calculate_room_area, format_statistics, \
     get_floor_plan_statistics  # noqa: E402
 from core.room_geometry import point_in_polygon, room_polygon  # noqa: E402
@@ -66,6 +66,10 @@ def _synthetic():
     for i, (w, pos, t) in enumerate([("l1", 0.5, OpeningType.DOOR_FRENCH), ("l2", 0.3, OpeningType.WINDOW_BAY),
                                      ("d0", 0.5, OpeningType.ARCHWAY), ("t_mid", 0.4, OpeningType.DOOR)]):
         plan.add_opening(Opening(w, pos, 36.0, t, id=f"op{i}"))
+    # stairs: orientation comes from the run (a stale stored rotation is ignored), zero length keeps its own
+    for i, (a, b, rot) in enumerate([((0, 300), (120, 300), 45.0), ((150, 300), (230, 380), 0.0),
+                                     ((200, 250), (200, 140), 0.0), ((260, 260), (260, 260), 30.0)]):
+        plan.add_stair(Stair(Point(*a), Point(*b), 36.0, StairType.STRAIGHT, 14, rotation=rot, id=f"st{i}"))
     return plan
 
 
