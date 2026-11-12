@@ -117,14 +117,15 @@ def _chain(walls: List[Wall], tol: float) -> Optional[List[Tuple[Wall, Point]]]:
     return order
 
 
-def room_polygon(room: Room, floor_plan: FloorPlan, tol: float = JOIN_TOLERANCE) -> List[Point]:
-    """Vertices of the room outline (wall centre lines), in walking order."""
+def room_outline(room: Room, floor_plan: FloorPlan, tol: float = JOIN_TOLERANCE) -> Tuple[List[Point], bool]:
+    """(vertices, closed): the room outline in walking order, and whether the walls joined into a closed loop
+    (if not, the vertices are the wall endpoints in listed order, as before)."""
     walls = [w for w in (floor_plan.get_wall(i) for i in room.wall_ids) if w is not None]
     if len(walls) < 3:
-        return _legacy_polygon(walls)
+        return _legacy_polygon(walls), False
     order = _chain(walls, tol)
     if order is None:
-        return _legacy_polygon(walls)
+        return _legacy_polygon(walls), False
     pts: List[Point] = []
     n = len(order)
     for i in range(n):
@@ -138,7 +139,12 @@ def room_polygon(room: Room, floor_plan: FloorPlan, tol: float = JOIN_TOLERANCE)
     if len(pts) > 1 and pts[0].distance_to(pts[-1]) <= 1e-9:
         pts.pop()
     # Start at the vertex where the first listed wall's chain begins, so output is stable.
-    return pts[-1:] + pts[:-1]
+    return pts[-1:] + pts[:-1], True
+
+
+def room_polygon(room: Room, floor_plan: FloorPlan, tol: float = JOIN_TOLERANCE) -> List[Point]:
+    """Vertices of the room outline (wall centre lines), in walking order."""
+    return room_outline(room, floor_plan, tol)[0]
 
 
 def polygon_area(points: Sequence[Point]) -> float:

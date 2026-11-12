@@ -9,7 +9,7 @@ import logging
 from typing import List, Optional
 
 from .geometry import Point, Room, FloorPlan
-from .room_geometry import room_polygon
+from .room_geometry import room_outline, room_polygon
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ def calculate_polygon_area(points: List[Point]) -> float:
 
 def calculate_perimeter(room: Room, floor_plan: FloorPlan) -> float:
     """
-    Calculate the perimeter of a room in feet.
+    Calculate the perimeter of a room in feet (length of its outline, see room_polygon).
     
     Args:
         room: Room to calculate perimeter for
@@ -80,13 +80,12 @@ def calculate_perimeter(room: Room, floor_plan: FloorPlan) -> float:
     Returns:
         Perimeter in feet
     """
-    total_length = 0.0
-    
-    for wall_id in room.wall_ids:
-        wall = floor_plan.get_wall(wall_id)
-        if wall:
-            total_length += wall.length()
-    
+    pts, closed = room_outline(room, floor_plan)
+    if not closed:  # walls do not join into a loop: sum the listed walls
+        total_length = sum(w.length() for w in (floor_plan.get_wall(i) for i in room.wall_ids) if w)
+    else:
+        total_length = sum(pts[i].distance_to(pts[(i + 1) % len(pts)]) for i in range(len(pts)))
+
     return total_length / 12.0  # Convert to feet
 
 

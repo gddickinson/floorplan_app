@@ -69,3 +69,14 @@ def test_shared_wall_running_past_both_corners():
     starts_on_long = Room("L2", wall_ids=["long", "b3", "b2", "mid"])
     for room in (upper, lower, starts_on_long):
         assert calculate_room_area(room, plan) == pytest.approx(120 * 100 / 144)
+
+
+def test_perimeter_follows_room_outline():
+    """A wall shared with a bigger neighbour only counts up to the room corner (12x8 ft room: 40 ft)."""
+    from utils.measurements import calculate_perimeter
+    plan = FloorPlan()
+    for w in [Wall(Point(0, 120), Point(0, 0), id="long"), Wall(Point(0, 96), Point(144, 96), id="b"),
+              Wall(Point(144, 0), Point(144, 96), id="c"), Wall(Point(0, 0), Point(144, 0), id="a")]:
+        plan.add_wall(w)
+    room = Room("R", wall_ids=["long", "b", "c", "a"])
+    assert calculate_perimeter(room, plan) == pytest.approx(40.0)
