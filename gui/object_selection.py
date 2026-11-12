@@ -315,58 +315,52 @@ class ObjectTransformHandler:
         local_dx = dx * cos_a - dy * sin_a
         local_dy = dx * sin_a + dy * cos_a
         
-        # Apply resize based on which handle
+        # Apply resize based on which handle: the dragged corner follows the cursor and the
+        # opposite corner stays fixed, so the size changes by the full local delta and the
+        # centre moves by half of it.
         if mode == TransformMode.RESIZE_TL:
-            # Top-left: decrease width and depth, move position
-            new_width = self.original_width - 2 * local_dx
-            new_depth = self.original_depth - 2 * local_dy
-            self._apply_resize(new_width, new_depth, local_dx, local_dy)
-            
+            new_width = self.original_width - local_dx
+            new_depth = self.original_depth - local_dy
         elif mode == TransformMode.RESIZE_TR:
-            # Top-right: increase width, decrease depth
-            new_width = self.original_width + 2 * local_dx
-            new_depth = self.original_depth - 2 * local_dy
-            self._apply_resize(new_width, new_depth, -local_dx, local_dy)
-            
+            new_width = self.original_width + local_dx
+            new_depth = self.original_depth - local_dy
         elif mode == TransformMode.RESIZE_BR:
-            # Bottom-right: increase both
-            new_width = self.original_width + 2 * local_dx
-            new_depth = self.original_depth + 2 * local_dy
-            self._apply_resize(new_width, new_depth, -local_dx, -local_dy)
-            
+            new_width = self.original_width + local_dx
+            new_depth = self.original_depth + local_dy
         elif mode == TransformMode.RESIZE_BL:
-            # Bottom-left: decrease width, increase depth
-            new_width = self.original_width - 2 * local_dx
-            new_depth = self.original_depth + 2 * local_dy
-            self._apply_resize(new_width, new_depth, local_dx, -local_dy)
-    
-    def _apply_resize(self, new_width: float, new_depth: float, 
-                      offset_x: float, offset_y: float):
-        """Apply resize with minimum size constraints and position adjustment."""
+            new_width = self.original_width - local_dx
+            new_depth = self.original_depth + local_dy
+        else:
+            return
+        self._apply_resize(new_width, new_depth, mode)
+
+    def _apply_resize(self, new_width: float, new_depth: float, mode: TransformMode):
+        """Apply resize with minimum size constraints, keeping the corner opposite the handle fixed."""
         obj = self.selected_object
-        
+
         # Enforce minimum sizes
         new_width = max(6.0, new_width)
         new_depth = max(6.0, new_depth)
-        
-        # Update size
         obj.width = new_width
         obj.depth = new_depth
-        
-        # Adjust position (in world coordinates)
+
+        # The centre moves by half the size change, towards the dragged corner.
+        sx = -1 if mode in (TransformMode.RESIZE_TL, TransformMode.RESIZE_BL) else 1
+        sy = -1 if mode in (TransformMode.RESIZE_TL, TransformMode.RESIZE_TR) else 1
+        offset_x = sx * (new_width - self.original_width) / 2
+        offset_y = sy * (new_depth - self.original_depth) / 2
+
         # Rotate offset by object rotation
         angle = math.radians(obj.rotation)
         cos_a = math.cos(angle)
         sin_a = math.sin(angle)
-        
         world_dx = offset_x * cos_a - offset_y * sin_a
         world_dy = offset_x * sin_a + offset_y * cos_a
-        
         obj.position = Point(
             self.original_position.x + world_dx,
             self.original_position.y + world_dy
         )
-    
+
     def _get_object_corners(self, obj: SelectableObject) -> List[Point]:
         """Get the four corners of the object in world coordinates."""
         cx = obj.position.x
