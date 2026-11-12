@@ -11,6 +11,7 @@ from typing import List, Tuple, Optional
 from dataclasses import dataclass
 
 from core import Point, Wall, Room, FloorPlan
+from core.room_geometry import room_polygon
 
 logger = logging.getLogger(__name__)
 
@@ -52,28 +53,12 @@ def calculate_room_area(room: Room, floor_plan: FloorPlan) -> Optional[float]:
         logger.warning(f"Room {room.name} has no walls")
         return None
     
-    # Get all wall endpoints
-    points = []
-    for wall_id in room.wall_ids:
-        wall = floor_plan.get_wall(wall_id)
-        if wall:
-            points.append(wall.start)
-            points.append(wall.end)
-    
-    if len(points) < 3:
+    # Outline from the walls joined in walking order (the listed order is the click order)
+    unique_points = room_polygon(room, floor_plan)
+    if len(unique_points) < 3:
         logger.warning(f"Room {room.name} has insufficient points for area calculation")
         return None
-    
-    # Remove duplicates while preserving order
-    unique_points = []
-    seen = set()
-    for p in points:
-        key = (round(p.x, 2), round(p.y, 2))
-        if key not in seen:
-            unique_points.append(p)
-            seen.add(key)
-    
-    # Calculate area using shoelace formula
+
     area_sq_inches = calculate_polygon_area(unique_points)
     area_sq_feet = area_sq_inches / 144.0  # Convert to square feet
     

@@ -14,6 +14,7 @@ from core import (
     Point, Wall, Opening, OpeningType, Room,
     Furniture, FurnitureType, Fixture, FixtureType, Stair, StairType,
 )
+from core.room_geometry import room_polygon, point_in_polygon
 from utils import AppConfig, format_dimension
 from .object_selection import SelectableObject, TransformMode
 from utils.undo_commands import ObjectState, TransformObjectCommand, RemoveObjectCommand
@@ -97,42 +98,10 @@ class CanvasEventsMixin:
         if not room.wall_ids:
             return False
 
-        vertices = []
-        for wall_id in room.wall_ids:
-            wall = self.floor_plan.get_wall(wall_id)
-            if wall:
-                vertices.append(wall.start)
-                vertices.append(wall.end)
-
+        vertices = room_polygon(room, self.floor_plan)
         if len(vertices) < 3:
             return False
-
-        unique_vertices: list = []
-        seen: set = set()
-        for v in vertices:
-            key = (round(v.x, 1), round(v.y, 1))
-            if key not in seen:
-                unique_vertices.append(v)
-                seen.add(key)
-
-        inside = False
-        n = len(unique_vertices)
-        p1 = unique_vertices[0]
-        for i in range(n + 1):
-            p2 = unique_vertices[i % n]
-            if point.y > min(p1.y, p2.y):
-                if point.y <= max(p1.y, p2.y):
-                    if point.x <= max(p1.x, p2.x):
-                        if p1.y != p2.y:
-                            xinters = (
-                                (point.y - p1.y) * (p2.x - p1.x)
-                                / (p2.y - p1.y)
-                                + p1.x
-                            )
-                        if p1.x == p2.x or point.x <= xinters:
-                            inside = not inside
-            p1 = p2
-        return inside
+        return point_in_polygon(point, vertices)
 
     # ── opening placement ───────────────────────────────────────────
     def _handle_opening_click(self, point: Point):

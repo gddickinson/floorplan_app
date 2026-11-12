@@ -13,6 +13,7 @@ from PyQt6.QtCore import Qt, QPoint, QTimer
 from PyQt6.QtGui import QPainter, QColor, QPen, QBrush, QPolygon, QTransform
 
 from core import FloorPlan, Building, Wall, Room
+from core.room_geometry import room_polygon
 
 logger = logging.getLogger(__name__)
 
@@ -512,26 +513,11 @@ class Viewer3DCanvas(QWidget):
         if not room.wall_ids or not room.color:
             return
         
-        # Get room vertices
-        vertices = []
-        for wall_id in room.wall_ids:
-            wall = floor_plan.get_wall(wall_id)
-            if wall:
-                vertices.append((wall.start.x, wall.start.y))
-                vertices.append((wall.end.x, wall.end.y))
-        
-        if len(vertices) < 3:
+        # Room outline (walls joined in walking order)
+        unique_vertices = [(p.x, p.y) for p in room_polygon(room, floor_plan)]
+        if len(unique_vertices) < 3:
             return
-        
-        # Remove duplicates
-        unique_vertices = []
-        seen = set()
-        for v in vertices:
-            key = (round(v[0], 1), round(v[1], 1))
-            if key not in seen:
-                unique_vertices.append(v)
-                seen.add(key)
-        
+
         # Project to 2D
         projected = [self._project_3d_to_2d(x, y, base_z + 0.5) for x, y in unique_vertices]
         

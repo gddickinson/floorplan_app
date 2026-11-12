@@ -13,6 +13,7 @@ from core import (
     Point, Wall, Opening, OpeningType, Room,
     Furniture, Fixture, FixtureType, Stair,
 )
+from core.room_geometry import room_polygon
 from utils import AppConfig, format_dimension
 
 logger = logging.getLogger(__name__)
@@ -187,19 +188,9 @@ class CanvasDrawingMixin:
         if not room.wall_ids:
             return
 
-        polygon = QPolygonF()
-        points_added = set()
-        for wall_id in room.wall_ids:
-            wall = self.floor_plan.get_wall(wall_id)
-            if wall:
-                start_key = (round(wall.start.x, 1), round(wall.start.y, 1))
-                if start_key not in points_added:
-                    polygon.append(self.world_to_screen(wall.start))
-                    points_added.add(start_key)
-                end_key = (round(wall.end.x, 1), round(wall.end.y, 1))
-                if end_key not in points_added:
-                    polygon.append(self.world_to_screen(wall.end))
-                    points_added.add(end_key)
+        polygon = QPolygonF(
+            [self.world_to_screen(p) for p in room_polygon(room, self.floor_plan)]
+        )
 
         if polygon.size() < 3:
             return
