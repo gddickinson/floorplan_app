@@ -819,18 +819,37 @@ class Building:
             new_floor = copy.deepcopy(source_floor)
             new_floor.name = name
             new_floor.floor_level = level
-            new_floor.elevation = level * source_floor.ceiling_height
         else:
-            # Create empty floor
+            # Create empty floor with the ceiling height of the nearest existing floor
+            ref = self._nearest_floor(level)
             new_floor = FloorPlan(
                 name=name,
                 floor_level=level,
-                elevation=level * 96.0  # 8 feet per level
+                ceiling_height=ref.ceiling_height if ref else 96.0,
             )
-        
+        new_floor.elevation = self.stacked_elevation(level, new_floor.ceiling_height)
+
         self.add_floor(new_floor)
         return new_floor
     
+    def _nearest_floor(self, level: int) -> Optional[FloorPlan]:
+        """Existing floor closest to `level` (the one below wins a tie), or None."""
+        others = [lv for lv in self.floors if lv != level]
+        if not others:
+            return None
+        return self.floors[min(others, key=lambda lv: (abs(lv - level), lv > level))]
+
+    def stacked_elevation(self, level: int, ceiling_height: float) -> float:
+        """Elevation of a floor at `level` stacked on (or under) the nearest existing floor using the real
+        ceiling heights; levels in between are assumed to be `ceiling_height` tall. The model has no floor
+        slab thickness, so floors stack ceiling to floor."""
+        ref = self._nearest_floor(level)
+        if ref is None:
+            return level * ceiling_height
+        if ref.floor_level < level:
+            return ref.elevation + ref.ceiling_height + (level - ref.floor_level - 1) * ceiling_height
+        return ref.elevation - (ref.floor_level - level) * ceiling_height
+
     def _generate_floor_name(self, level: int) -> str:
         """Generate a floor name based on level."""
         if level == 0:
