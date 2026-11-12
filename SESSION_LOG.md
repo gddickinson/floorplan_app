@@ -12,5 +12,10 @@
   counts and styling ignored the specific types (door_french, window_bay, ...); format_dimension for negative values
   and values rounding to 12"; corner-handle resize moved the corner twice as far as the cursor.
 - README: the PNG/PDF export claim corrected (exporter exists in utils/export.py but is not on the desktop menus).
-- Open: stairs' `rotation` field is ignored by drawing but used by desktop selection (selection box is wrong for stairs
-  not running vertically); `Building.create_new_floor` uses 96" per level regardless of ceiling height.
+
+## 2026-11-11 (later) — follow-ups requested by George
+- Fixed stair orientation: `Stair.rotation` is now derived from the run start -> end and setting it turns the run, so
+  desktop selection/rotate/resize, drawing, undo and files agree (web model.js too; fixture includes stairs).
+- Fixed `Building.create_new_floor`: new floors stack on the nearest existing floor's elevation + ceiling height
+  (no floor thickness in the model) instead of level x 96".
+- Split core/geometry.py (930 lines) into elements.py, objects.py, floor_plan.py, building.py; geometry.py re-exports.

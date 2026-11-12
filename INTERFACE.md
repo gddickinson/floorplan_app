@@ -7,7 +7,11 @@
 
 ### Core Layer (`core/`)
 Pure data models with no GUI dependencies.
-- **geometry.py** -- Point, Wall, WallType, WallStyle, WallMaterial, Opening, OpeningType, Room, Furniture, FurnitureType, Fixture, FixtureType, Stair, StairType, FloorPlan, Building
+- **geometry.py** -- re-export module: every model class below (existing `from core.geometry import ...` keeps working)
+- **elements.py** -- Point, Wall, WallType, WallStyle, WallMaterial, Opening, OpeningType (is_door/is_window), Room
+- **objects.py** -- Furniture, FurnitureType, Fixture, FixtureType, Stair (rotation derived from start -> end), StairType, stair_rotation
+- **floor_plan.py** -- FloorPlan: element lists, add/remove/get, get_bounds, to_dict/from_dict, save_to_file/load_from_file
+- **building.py** -- Building: floors by level, create_new_floor, stacked_elevation, to_dict/from_dict
 - **level.py** -- Level class for multi-story building support
 - **room_geometry.py** -- room_outline / room_polygon (walls joined in walking order, corners at centre-line intersections), polygon_area, point_in_polygon, polygon_label_point
 - **snapping.py** -- GRID_SIZE, SNAP_TOLERANCE, snap_to_grid, find_snap_point, point_near_line, wall_at_point, opening_position, opening_center (used by gui/canvas*.py)
